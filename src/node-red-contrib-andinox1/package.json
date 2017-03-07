@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-andinox1",
-    "version": "0.0.1",
+    "version": "0.0.5",
     "description": "A Node-RED filter-node that handles messages from the Andino X1 Board.",
     "author": {
         "name": "Marcus Leufgen",
