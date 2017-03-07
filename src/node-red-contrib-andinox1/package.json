@@ -1,0 +1,28 @@
+{
+    "name": "node-red-contrib-andinox1",
+    "version": "0.0.1",
+    "description": "A Node-RED filter-node that handles messages from the Andino X1 Board.",
+    "author": {
+        "name": "Marcus Leufgen",
+        "email": "info@clearsystems.de",
+        "url": "http://clearsystems.de"
+    },
+    "homepage": "https://andino.systems/andinox1/",
+    "license": "Apache-2.0",
+    "scripts": {},
+    "dependencies": {},
+    "devDependencies": {},
+    "keywords": [
+        "node-red",
+        "andinox1"
+    ],
+    "node-red": {
+    "nodes": {
+      "AndinoX1": "andinox1.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andino-systems/Andino-X1/tree/master/src/node-red-contrib-andinox1"
+  }
+}

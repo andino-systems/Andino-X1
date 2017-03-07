@@ -1,0 +1,375 @@
+[
+    {
+        "id": "7dbf9363.91601c",
+        "type": "ui_button",
+        "z": "3e65bdfc.19fcc2",
+        "name": "Relais 1 - on",
+        "group": "95d4214.2dbb2e",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "ON",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "{\"relais\": 1, \"state\":true}",
+        "payloadType": "json",
+        "topic": "",
+        "x": 122,
+        "y": 206,
+        "wires": [
+            [
+                "343fbb2e.edc544"
+            ]
+        ]
+    },
+    {
+        "id": "343fbb2e.edc544",
+        "type": "switch",
+        "z": "3e65bdfc.19fcc2",
+        "name": "",
+        "property": "payload.relais",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 348,
+        "y": 313,
+        "wires": [
+            [
+                "1646b340.9b2a9d"
+            ],
+            [
+                "edfdd85a.1ad358"
+            ]
+        ]
+    },
+    {
+        "id": "1646b340.9b2a9d",
+        "type": "function",
+        "z": "3e65bdfc.19fcc2",
+        "name": "getState",
+        "func": " return  { payload: msg.payload.state };",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 502,
+        "y": 285,
+        "wires": [
+            [
+                "b0be324e.f1362"
+            ]
+        ]
+    },
+    {
+        "id": "edfdd85a.1ad358",
+        "type": "function",
+        "z": "3e65bdfc.19fcc2",
+        "name": "getState",
+        "func": " return  { payload: msg.payload.state };",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 499,
+        "y": 335,
+        "wires": [
+            [
+                "cd2d34b7.d85b58"
+            ]
+        ]
+    },
+    {
+        "id": "b0be324e.f1362",
+        "type": "AndinoX1",
+        "z": "3e65bdfc.19fcc2",
+        "name": "AndinoX1: Releais 1",
+        "channel": "1",
+        "filter": "relais1",
+        "x": 721,
+        "y": 280,
+        "wires": [
+            [
+                "17cdee00.5ee642"
+            ]
+        ]
+    },
+    {
+        "id": "cd2d34b7.d85b58",
+        "type": "AndinoX1",
+        "z": "3e65bdfc.19fcc2",
+        "name": "AndinoX1: Releais 2",
+        "channel": "1",
+        "filter": "relais2",
+        "x": 724,
+        "y": 336,
+        "wires": [
+            [
+                "17cdee00.5ee642"
+            ]
+        ]
+    },
+    {
+        "id": "17cdee00.5ee642",
+        "type": "serial out",
+        "z": "3e65bdfc.19fcc2",
+        "name": "",
+        "serial": "d15661b3.cb828",
+        "x": 983,
+        "y": 292,
+        "wires": []
+    },
+    {
+        "id": "6488c3b7.940b2c",
+        "type": "serial in",
+        "z": "3e65bdfc.19fcc2",
+        "name": "/dev/ttyS0",
+        "serial": "d15661b3.cb828",
+        "x": 234,
+        "y": 456,
+        "wires": [
+            [
+                "103b90e3.f2f37f",
+                "cfd2d616.3231e8"
+            ]
+        ]
+    },
+    {
+        "id": "cfd2d616.3231e8",
+        "type": "AndinoX1",
+        "z": "3e65bdfc.19fcc2",
+        "name": "AndinoX1: Counter",
+        "channel": "1",
+        "filter": "counter",
+        "x": 477,
+        "y": 456,
+        "wires": [
+            [
+                "88d00dfb.55b71",
+                "2b36f92f.8d67c6"
+            ]
+        ]
+    },
+    {
+        "id": "64730324.49896c",
+        "type": "ui_button",
+        "z": "3e65bdfc.19fcc2",
+        "name": "Relais 1 - off",
+        "group": "95d4214.2dbb2e",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "OFF",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "{\"relais\": 1, \"state\":false}",
+        "payloadType": "json",
+        "topic": "",
+        "x": 121,
+        "y": 254,
+        "wires": [
+            [
+                "343fbb2e.edc544"
+            ]
+        ]
+    },
+    {
+        "id": "dfbafe5c.145b3",
+        "type": "ui_button",
+        "z": "3e65bdfc.19fcc2",
+        "name": "Relais 2 - off",
+        "group": "2bcd2d9e.7e9472",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "OFF",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "{\"relais\": 2, \"state\":false}",
+        "payloadType": "json",
+        "topic": "",
+        "x": 120,
+        "y": 359,
+        "wires": [
+            [
+                "343fbb2e.edc544"
+            ]
+        ]
+    },
+    {
+        "id": "c5125856.4384d8",
+        "type": "ui_button",
+        "z": "3e65bdfc.19fcc2",
+        "name": "Relais 2 - on",
+        "group": "2bcd2d9e.7e9472",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "ON",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "{\"relais\": 2, \"state\":true}",
+        "payloadType": "json",
+        "topic": "",
+        "x": 120,
+        "y": 309,
+        "wires": [
+            [
+                "343fbb2e.edc544"
+            ]
+        ]
+    },
+    {
+        "id": "88d00dfb.55b71",
+        "type": "ui_text",
+        "z": "3e65bdfc.19fcc2",
+        "group": "940285b3.ec4188",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Counter 1:",
+        "format": "{{msg.payload.counter1}}",
+        "layout": "row-spread",
+        "x": 788,
+        "y": 431,
+        "wires": []
+    },
+    {
+        "id": "2b36f92f.8d67c6",
+        "type": "ui_text",
+        "z": "3e65bdfc.19fcc2",
+        "group": "940285b3.ec4188",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Counter 2:",
+        "format": "{{msg.payload.counter2}}",
+        "layout": "row-spread",
+        "x": 789,
+        "y": 489,
+        "wires": []
+    },
+    {
+        "id": "103b90e3.f2f37f",
+        "type": "AndinoX1",
+        "z": "3e65bdfc.19fcc2",
+        "name": "AndinoX1: State",
+        "channel": "1",
+        "filter": "event",
+        "x": 477,
+        "y": 592,
+        "wires": [
+            [
+                "e6b83d63.ffe5",
+                "de519b.b0c72e68"
+            ]
+        ]
+    },
+    {
+        "id": "e6b83d63.ffe5",
+        "type": "ui_text",
+        "z": "3e65bdfc.19fcc2",
+        "group": "eec51bf9.fed488",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "State Pin 1:",
+        "format": "{{msg.payload.pin1}}",
+        "layout": "row-spread",
+        "x": 792,
+        "y": 568,
+        "wires": []
+    },
+    {
+        "id": "de519b.b0c72e68",
+        "type": "ui_text",
+        "z": "3e65bdfc.19fcc2",
+        "group": "eec51bf9.fed488",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "State Pin 2:",
+        "format": "{{msg.payload.pin2}}",
+        "layout": "row-spread",
+        "x": 792,
+        "y": 633,
+        "wires": []
+    },
+    {
+        "id": "95d4214.2dbb2e",
+        "type": "ui_group",
+        "z": "",
+        "name": "Relais 1",
+        "tab": "ec3acd54.17111",
+        "order": 1,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "d15661b3.cb828",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/ttyS0",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    },
+    {
+        "id": "2bcd2d9e.7e9472",
+        "type": "ui_group",
+        "z": "",
+        "name": "Relais 2",
+        "tab": "ec3acd54.17111",
+        "order": 2,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "940285b3.ec4188",
+        "type": "ui_group",
+        "z": "",
+        "name": "Counter",
+        "tab": "ec3acd54.17111",
+        "order": 3,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "eec51bf9.fed488",
+        "type": "ui_group",
+        "z": "",
+        "name": "Single Events",
+        "tab": "ec3acd54.17111",
+        "order": 4,
+        "disp": true,
+        "width": "6"
+    },
+    {
+        "id": "ec3acd54.17111",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Andino X1 Testpage",
+        "icon": "dashboard",
+        "order": 1
+    }
+]
