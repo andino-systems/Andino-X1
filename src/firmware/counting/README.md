@@ -44,3 +44,7 @@ Author
 
 * 2017 by [AndinoSystems][2]
 * [Contact us by email](mailto:info@andino.systems)
+
+[1]:https://andino.systems/andino-x1/
+[2]:https://github.com/andino-systems/Andino-X1
+[3]:https://code.google.com/archive/p/arduino-timerone/downloads
