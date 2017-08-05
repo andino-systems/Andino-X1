@@ -1,0 +1,5 @@
+dtdebug=1
+
+dtparam=spi=on
+dtoverlay=spi0-cs,cs1_pin=8  
+dtoverlay=sc16is752-spi1

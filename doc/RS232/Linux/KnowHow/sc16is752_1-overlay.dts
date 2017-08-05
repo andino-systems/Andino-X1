@@ -1,0 +1,45 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835", "brcm,bcm2836", "brcm,bcm2708", "brcm,bcm2709";
+
+    fragment@0 {
+        target = <&spidev1>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    fragment@1 {
+        target = <&spi0>;
+        frag1: __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            status = "okay";
+
+            sc16is752: sc16is752@1 {
+                compatible = "nxp,sc16is752";
+                reg = <1>; /* CE1 */
+                clocks = <&sc16is752_clk>;
+                interrupt-parent = <&gpio>;
+                interrupts = <21 2>; /* IRQ_TYPE_EDGE_FALLING */
+                gpio-controller;
+                #gpio-cells = <2>;
+                spi-max-frequency = <4000000>;
+      status = "okay";
+
+                sc16is752_clk: sc16is752_1_clk {
+                    compatible = "fixed-clock";
+                    #clock-cells = <0>;
+                    clock-frequency = <1843200>;
+                };
+            };
+        };
+    };
+
+    __overrides__ {
+        int_pin = <&sc16is752>,"interrupts:0";
+    };
+};
