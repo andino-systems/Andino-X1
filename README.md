@@ -39,28 +39,38 @@ The SPI and I2C Busses of the Raspberry Pi and the Arduino Controller are connec
 Different plugins can be plugged into this header. 
 ![Andino X1 - Extension port](https://andino.systems/wp-content/uploads/Extension-Pinout-300x293.png)
 Different extensions are available.
+
 #### Dualchannel RS232 Extension
 Extends the Raspberry or the Arduino by two serial interfaces 
+
 [![Andino X1 - Dualchannel RS232 Extension](https://andino.systems/wp-content/uploads/rs232-extension-small-300x205.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS232)
+
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS232) for more details.**
 
 #### RS485 / RS422 Extension
 Extends the Raspberry or the Arduino by a fully isolated RS485 / RS422 interface
+
 [![Andino X1 - Dualchannel RS485 Extension](https://andino.systems/wp-content/uploads/rs485-extension-small-300x235.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS485)
+
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS485) for more details.**
 
 #### 3 Digital Input
 With this Extension the total count of Inputs is five. The Inputs are galvanically isolated to max 5kV.
+
 [![Andino X1 - Digital input extension Extension](https://andino.systems/wp-content/uploads/3in-extension-small-300x211.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/3DI)
+
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/3DI) for more details.**
 
 #### 1 Digital Input / 2 Relay Output
 With this Extension the total count of Inputs is three and the total Relays are four. The Inputs are galvanically isolated to max 5kV.
+
 [![Andino X1 - Digital input, Relais extension Extension](https://andino.systems/wp-content/uploads/1in2out-extension-small-300x209.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO)
+
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO) for more details.**
 
 #### Breadboard
 For prototyping of a additional extension a Breadboard is also available.
+
 ![Andino X1 - Breadboard Extension](https://andino.systems/wp-content/uploads/breadboard-extension-small-300x232.png)
 
 ### Application examples
