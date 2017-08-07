@@ -12,8 +12,13 @@ Overview
 This Board based on the SPI Uart from NXP [SC16IS752][3]. The SPI Channel can be jumpered to the Raspberry Pi or the Arduino Controller. With the Arduino Controller time critical protocols can be implemented or a general pre processing of the data can be performed.
 In Half Duplex Mode the transmitter can be switched on by the application with the RTS signal or automatically by the Hardware (Auto Transmitter on). 
 #### Connector
+
+![Andino X1 -Screw Terminal](https://andino.systems/wp-content/uploads/extension-connector-300x182.png)
+
 ![RS485 Connector screw terminal](https://andino.systems/wp-content/uploads/RS485_RS422-small.png)
+
 #### Jumper
+
 ![RS485 Jumper](https://andino.systems/wp-content/uploads/RS485-jumper.png)
 
 #### Content

@@ -11,6 +11,8 @@ Overview
 
 The Board based on the SPI Uart from NXP [SC16IS752][3]. The SPI Channel can be jumpered to the Raspberry Pi or the Arduino Controller. With the Arduino Controller time critical protocols can be implemented or a general pre processing of the data can be performed.
 
+![Andino X1 -Screw Terminal](https://andino.systems/wp-content/uploads/extension-connector-300x182.png)
+
 ![Andino X1 - RS232 Connector Skrew Terminal](https://andino.systems/wp-content/uploads/RS232-small.png)
 
 #### Content
