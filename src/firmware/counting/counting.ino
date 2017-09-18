@@ -2,18 +2,26 @@
 #include "TimerOne.h"
 #include <avr/wdt.h>
 
-#define IN_1       7
+#define IN_1       7 // PD7
 #define IN_1_PORT  PIND
 #define IN_1_PIN   7
 
-#define IN_2       6
+#define IN_2       6 // PD6
 #define IN_2_PORT  PIND
 #define IN_2_PIN   6
 
+// Only available with 3DI or 1DI2DO shield
+#define IN_3       2 // PD2
+#define IN_3_PORT  PIND
+#define IN_3_PIN   2
+
 #define LED_PIN   13
 
-#define OUT_1     14
-#define OUT_2     15
+#define OUT_1     14 // PC0 analog 0
+#define OUT_2     15 // PC1 analog 1
+// Only available with 1DI2DO shield
+#define OUT_3     19 // PC5 analog 5
+#define OUT_4     10 // PB2 
 
 #define LF 10
 #define CR 13
@@ -45,6 +53,7 @@ typedef struct {
 
 CounterControl Counter1;
 CounterControl Counter2;
+CounterControl Counter3;
 
 int ledState = LOW;
 
@@ -56,6 +65,8 @@ typedef struct {
 
 RelaisControl Relais1;
 RelaisControl Relais2;
+RelaisControl Relais3;
+RelaisControl Relais4;
 
 void setup() 
 {
@@ -70,9 +81,14 @@ void setup()
   
   pinMode(IN_2,INPUT); 
   digitalWrite(IN_2, HIGH); // activate pull up resistor 
-  
+
+  pinMode(IN_3,INPUT); 
+  digitalWrite(IN_3, HIGH); // activate pull up resistor 
+
   pinMode(OUT_1,OUTPUT);
   pinMode(OUT_2,OUTPUT);
+  pinMode(OUT_3,OUTPUT);
+  pinMode(OUT_4,OUTPUT);
   pinMode(LED_PIN, OUTPUT);
   setup_interrupt();
 }
@@ -98,19 +114,22 @@ void loop()
   if (currentMillis - lastSendMillis  >= TheSetup.SendCycle) 
   {
     lastSendMillis = currentMillis;
-    loopCounter++;
     Serial.print( "CNTR "); 
-    Serial.print(loopCounter, DEC ); 
+    Serial.print(++loopCounter, DEC ); 
     Serial.print( " ");
     Serial.print(Counter1.Counter, DEC ); 
     Serial.print( " "); 
-    Serial.println(Counter2.Counter, DEC );
+    Serial.print(Counter2.Counter, DEC );
+    Serial.print( " "); 
+    Serial.println(Counter3.Counter, DEC );
     Serial.print( "STAT "); 
-    Serial.print(loopCounter, DEC ); 
+    Serial.print(++loopCounter, DEC ); 
     Serial.print( " ");
     Serial.print(Counter1.current_val, DEC ); 
+    Serial.print( " ");
+    Serial.print(Counter2.current_val, DEC ); 
     Serial.print( " "); 
-    Serial.println(Counter2.current_val, DEC );
+    Serial.println(Counter3.current_val, DEC );
   }
 
   if (currentMillis - lastSecondMillis  >= 1000) 
@@ -130,6 +149,22 @@ void loop()
       {
         digitalWrite(OUT_2, 0);
         Serial.println( "REL2 0" );
+      }
+    }
+    if( Relais3.puls_timer != 0 )
+    {
+      if( --Relais3.puls_timer == 0 )
+      {
+        digitalWrite(OUT_3, 0);
+        Serial.println( "REL3 0" );
+      }
+    }
+    if( Relais4.puls_timer != 0 )
+    {
+      if( --Relais4.puls_timer == 0 )
+      {
+        digitalWrite(OUT_4, 0);
+        Serial.println( "REL4 0" );
       }
     }
   }
@@ -182,6 +217,27 @@ void timerInterrupt()
   {
     Counter2.poll_counter = 0;
     Counter2.current_val  = input;
+  }
+
+  //  Counter 3
+  input = bitRead( IN_3_PORT, IN_3_PIN );
+  input = (input==1 )?0:1;
+  if( Counter3.current_val  == input && input == TheSetup.CountOnLH)
+  {
+    if( Counter3.poll_counter  != 0xff ) // allready sent
+    {
+      Counter3.poll_counter ++;
+      if( Counter3.poll_counter == TheSetup.PollCount )
+      {
+         Counter3.Counter++;
+         Counter3.poll_counter  = 0xff;
+      }
+    }
+  }
+  else
+  {
+    Counter3.poll_counter = 0;
+    Counter3.current_val  = input;
   }
 }
 
@@ -279,6 +335,8 @@ void DoCheckRxData()
 // SEND 5000      ( send all xxx ms )
 // REL1 0|1       ( set releais 1 to on or off )
 // REL2 0|1       ( set releais 2 to on or off )
+// REL3 0|1       ( set releais 3 to on or off )
+// REL4 0|1       ( set releais 4 to on or off )
 // RPU1 1000      ( pulse relais 1 for nnn ms )
 // RPU2 1000      ( pulse relais 2 for nnn ms )
 void OnDataReceived()
@@ -358,6 +416,26 @@ void OnDataReceived()
       result = true;
     }
 
+    if( cmd.startsWith("REL3 "))
+    {
+      if( !checkRange( value, 0, 1 ) )
+        return;
+      digitalWrite(OUT_3, value);
+      Serial.print( "REL3 ");
+      Serial.println( value, DEC );
+      result = true;
+    }
+
+    if( cmd.startsWith("REL4 "))
+    {
+      if( !checkRange( value, 0, 1 ) )
+        return;
+      digitalWrite(OUT_4, value);
+      Serial.print( "REL4 ");
+      Serial.println( value, DEC );
+      result = true;
+    }
+
     if( cmd.startsWith("RPU1 "))
     {
       if( !checkRange( value, 1, 255 ) )
@@ -379,6 +457,30 @@ void OnDataReceived()
       Serial.print( "RPU2 ");
       Serial.println( value, DEC );
       Serial.println( "REL2 1" );
+      result = true;
+    }
+
+    if( cmd.startsWith("RPU3 "))
+    {
+      if( !checkRange( value, 1, 255 ) )
+        return;
+      digitalWrite(OUT_3, 1);
+      Relais3.puls_timer = value;
+      Serial.print( "RPU3 ");
+      Serial.println( value, DEC );
+      Serial.println( "REL3 1" );
+      result = true;
+    }
+
+    if( cmd.startsWith("RPU4 "))
+    {
+      if( !checkRange( value, 0, 255 ) )
+        return;
+      digitalWrite(OUT_4, 1);
+      Relais4.puls_timer = value;
+      Serial.print( "RPU4 ");
+      Serial.println( value, DEC );
+      Serial.println( "REL4 1" );
       result = true;
     }
 
