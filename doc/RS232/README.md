@@ -13,7 +13,7 @@ The Board based on the SPI Uart from NXP [SC16IS752][3]. The SPI Channel can be 
 
 ![Andino X1 -Screw Terminal](https://andino.systems/wp-content/uploads/extension-connector-300x182.png)
 
-![Andino X1 - RS232 Connector Skrew Terminal](https://andino.systems/wp-content/uploads/RS232-small.png)
+![Andino X1 - RS232 Connector Skrew Terminal](https://github.com/andino-systems/Andino-X1/blob/master/doc/RS232/RS232.png?raw=true)
 
 #### Content
 This Repository contains the 

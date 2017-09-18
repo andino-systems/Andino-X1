@@ -15,7 +15,7 @@ In Half Duplex Mode the transmitter can be switched on by the application with t
 
 ![Andino X1 -Screw Terminal](https://andino.systems/wp-content/uploads/extension-connector-300x182.png)
 
-![RS485 Connector screw terminal](https://andino.systems/wp-content/uploads/RS485_RS422-small.png)
+![RS485 Connector screw terminal](https://github.com/andino-systems/Andino-X1/blob/master/doc/RS485/RS485_RS422.png?raw=true)
 
 #### Jumper
 
