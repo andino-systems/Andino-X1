@@ -28,22 +28,47 @@ This Repository contains the
 * Library for the Arduino
 
 #### Installation on the Raspberry Pi 
-* Copy the dtbo files to /boot/
+
+Install sc16is752 overlay from dts-file
+```
+wget https://github.com/andino-systems/Andino-X1/raw/master/doc/RS232/Raspberry/sc16is752-spi0.dts
+wget https://github.com/andino-systems/Andino-X1/raw/master/doc/RS232/Raspberry/makedts.sh
+chmod +x makedts.sh
+./makedts
+```
+
+or download the dtbo file
+```
+wget https://github.com/andino-systems/Andino-X1/raw/master/doc/RS232/Raspberry/sc16is752-spi0.dtbo
+sudo cp ./sc16is752-spi0.dtbo /boot/overlays/
+```
+
 * Append this to the /boot/config.txt
 ```
+sudo nano /boot/config.txt
+```
+```
 dtparam=spi=on
-dtoverlay=spi0-cs,cs1_pin=8  
-dtoverlay=sc16is752-spi1
+dtoverlay=spi0-cs,cs0_pin=8,cs1_pin=12
+dtoverlay=sc16is752-spi0,int_pin=7
 ```
 * Reboot. After that two new Devices are available /dev/ttySC0 and /dev/ttySC1
 
-#### Installation on Arduino
-Copy the content of Arduino\SPIUart to your Libaries Folder (C:\Users\[USERNAME]\Documents\Arduino\libraries.
+### Test
+```
+sudo apt-get install minicom
+sudo minicom --setup
+```
+select /dev/ttySC0 or /dev/ttySC1
 
 ### Application examples
 * Meter Reading (e.g. IEC 1107)
 * Serial data Collect
 
+### Usefull links
+[Forum SC16IS752 (SC16IS7XX driver) Device Tree problem][4]
+[Device Tree, Overlays and Parameters][5]
+[List of Overlays][5]
 
 Author
 -----
@@ -54,3 +79,6 @@ Author
 [1]:https://andino.systems/andino-x1/
 [2]:https://github.com/andino-systems/Andino-X1
 [3]:http://www.nxp.com/docs/en/data-sheet/SC16IS752_SC16IS762.pdf?
+[4]:https://www.raspberrypi.org/forums/viewtopic.php?t=146908&p=1083915#p1024636
+[5]:https://www.raspberrypi.org/documentation/configuration/device-tree.md
+[6]:https://github.com/raspberrypi/firmware/tree/master/boot/overlays
