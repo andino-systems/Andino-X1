@@ -66,9 +66,9 @@ select /dev/ttySC0 or /dev/ttySC1
 * Serial data Collect
 
 ### Usefull links
-[Forum SC16IS752 (SC16IS7XX driver) Device Tree problem][4]
-[Device Tree, Overlays and Parameters][5]
-[List of Overlays][5]
+[Forum SC16IS752 (SC16IS7XX driver) Device Tree problem][4]  
+[Device Tree, Overlays and Parameters][5]  
+[List of Overlays][5]  
 
 Author
 -----
