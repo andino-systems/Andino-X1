@@ -85,6 +85,16 @@ For prototyping of a additional extension a Breadboard is also available.
 * Central in the house automation
 * IoT nodes
 
+### How to prepare the Raspbian
+**[See here for more details.][3]**
+
+### Programming examples
+
+**[How to use Andino X1 with Node red](https://github.com/andino-systems/Andino-X1/tree/master/src/node-red-contrib-andinox1)**   
+**[How to use Andino X1 with python](https://github.com/andino-systems/Andino-X1/tree/master/src/python)**   
+**[Example Firmware](https://github.com/andino-systems/Andino-X1/tree/master/src/firmware/counting)**   
+
+
 Author
 -----
 
@@ -93,4 +103,5 @@ Author
 
 [1]:https://andino.systems/andino-x1/
 [2]:https://github.com/andino-systems/Andino-X1
+[3]:https://github.com/andino-systems/Andino-X1/tree/master/doc/BaseBoard
 
