@@ -28,7 +28,7 @@ dwc_otg.lpm_enable=0 ~~console=serial0,115200 console=tty1~~ root=/dev/mmcblk0p2
 sudo apt-get install minicom
 sudo minicom --setup
 ```
-Set Hardware Flow to No, set Device to /dev/ttyS0, set BPS to 19200
+Set Hardware Flow to No, set Device to /dev/ttyAMA0 or /dev/serial0, set BPS to 19200
 ```
 +-----------------------------------------------------------------------+
 | A - Serial Device : /dev/ttyAMA0                                      |
