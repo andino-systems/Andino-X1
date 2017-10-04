@@ -1,7 +1,7 @@
 How to enable the UART
 ==========
 
-#### 1. Enable UART as /dev/ttyAMA0   
+#### 1. Enable UART as /dev/ttyAMA0 or /dev/serial0 
 
 ```sh
 sudo nano /boot/config.txt
@@ -14,7 +14,7 @@ dtoverlay=pi3-disable-bt-overlay
 dtoverlay=pi3-miniuart-bt
 ```
 
-#### 2. Disable Console on /dev/ttyS0
+#### 2. Disable Console on /dev/serial0
 ```sh
 sudo nano /boot/cmdline.txt
 ```
