@@ -2,6 +2,12 @@
 #include "TimerOne.h"
 #include <avr/wdt.h>
 
+#define LED_PIN   13
+
+#define SHIELD_NONE 0
+#define SHIELD_1DI2DO 1
+#define SHIELD_3DI 2
+
 #define IN_1       7 // PD7
 #define IN_1_PORT  PIND
 #define IN_1_PIN   7
@@ -15,7 +21,16 @@
 #define IN_3_PORT  PIND
 #define IN_3_PIN   2
 
-#define LED_PIN   13
+// Only available with 3DI
+#define IN_4       2 // PC4
+#define IN_4_PORT  PINC
+#define IN_4_PIN   4
+
+// Only available with 3DI
+#define IN_5       2 // PC5
+#define IN_5_PORT  PINC
+#define IN_5_PIN   5
+
 
 #define OUT_1     14 // PC0 analog 0
 #define OUT_2     15 // PC1 analog 1
@@ -26,7 +41,7 @@
 #define LF 10
 #define CR 13
 
-#define BAUD_RATE 19200
+#define BAUD_RATE 38400
 
 // ---------------------- [ Receive Data ]------------------
 #define RX_SIZE  19
@@ -42,6 +57,7 @@ struct Setup
   byte          PollCount;    // Poll-Count till level is stable
   bool          CountOnLH;    // Count on .. edge
   unsigned int  SendCycle;    // Send cycle in ms
+  byte          Shield;       // 0 = none, 1 = 1DI2DO, 2 = 3DI
 } TheSetup;
 
 // ---------------------- [ Input & Debounce ] ----------------
@@ -54,6 +70,8 @@ typedef struct {
 CounterControl Counter1;
 CounterControl Counter2;
 CounterControl Counter3;
+CounterControl Counter4;
+CounterControl Counter5;
 
 int ledState = LOW;
 
@@ -71,11 +89,16 @@ RelaisControl Relais4;
 void setup() 
 {
   Serial.begin(BAUD_RATE);
-
   Serial.println( "STRT" );
 
   SetupRead();
-  
+  pinMode(LED_PIN, OUTPUT);
+  setup_in_out();
+  setup_interrupt();
+}
+
+void setup_in_out()
+{
   pinMode(IN_1,INPUT); 
   digitalWrite(IN_1, HIGH); // activate pull up resistor 
   
@@ -87,10 +110,19 @@ void setup()
 
   pinMode(OUT_1,OUTPUT);
   pinMode(OUT_2,OUTPUT);
-  pinMode(OUT_3,OUTPUT);
-  pinMode(OUT_4,OUTPUT);
-  pinMode(LED_PIN, OUTPUT);
-  setup_interrupt();
+  
+  if( TheSetup.Shield == SHIELD_1DI2DO )
+  {  
+    pinMode(OUT_3,OUTPUT);
+    pinMode(OUT_4,OUTPUT);
+  }
+  if( TheSetup.Shield == SHIELD_3DI )
+  {  
+    pinMode(IN_4,INPUT); 
+    digitalWrite(IN_4, HIGH); // activate pull up resistor 
+    pinMode(IN_5,INPUT); 
+    digitalWrite(IN_5, HIGH); // activate pull up resistor 
+  }
 }
 
 void setup_interrupt()
@@ -105,7 +137,7 @@ void setup_interrupt()
 unsigned long lastSendMillis = 0;
 unsigned long lastSecondMillis = 0;
 
-unsigned long loopCounter = 0;
+word loopCounter = 0;
 
 void loop() 
 {
@@ -114,22 +146,41 @@ void loop()
   if (currentMillis - lastSendMillis  >= TheSetup.SendCycle) 
   {
     lastSendMillis = currentMillis;
-    Serial.print( "CNTR "); 
-    Serial.print(++loopCounter, DEC ); 
-    Serial.print( " ");
-    Serial.print(Counter1.Counter, DEC ); 
-    Serial.print( " "); 
-    Serial.print(Counter2.Counter, DEC );
-    Serial.print( " "); 
-    Serial.println(Counter3.Counter, DEC );
-    Serial.print( "STAT "); 
-    Serial.print(++loopCounter, DEC ); 
-    Serial.print( " ");
+    Serial.write( ':' );
+    PrintHex16(++loopCounter); 
+    Serial.write( '{' );
+    PrintHex16(Counter1.Counter); 
+    Serial.write( ',' );
+    PrintHex16(Counter2.Counter);
+    if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI )
+    {
+      Serial.write( ',' );
+      PrintHex16(Counter3.Counter);
+    }
+    if( TheSetup.Shield == SHIELD_3DI )
+    {
+      Serial.write( ',' );
+      PrintHex16(Counter4.Counter);
+      Serial.write( ',' );
+      PrintHex16(Counter5.Counter);
+    }    
+    Serial.write( "}{" );
     Serial.print(Counter1.current_val, DEC ); 
-    Serial.print( " ");
+    Serial.write( ',' );
     Serial.print(Counter2.current_val, DEC ); 
-    Serial.print( " "); 
-    Serial.println(Counter3.current_val, DEC );
+    if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI )
+    {
+      Serial.write( ',' );
+      Serial.print(Counter3.current_val, DEC );
+    }
+    if( TheSetup.Shield == SHIELD_3DI )
+    {
+      Serial.write( ',' );
+      Serial.print(Counter4.current_val, DEC );
+      Serial.write( ',' );
+      Serial.print(Counter5.current_val, DEC );
+    }
+    Serial.println("}");
   }
 
   if (currentMillis - lastSecondMillis  >= 1000) 
@@ -219,6 +270,9 @@ void timerInterrupt()
     Counter2.current_val  = input;
   }
 
+  if( TheSetup.Shield == SHIELD_NONE )
+    return;
+    
   //  Counter 3
   input = bitRead( IN_3_PORT, IN_3_PIN );
   input = (input==1 )?0:1;
@@ -238,6 +292,52 @@ void timerInterrupt()
   {
     Counter3.poll_counter = 0;
     Counter3.current_val  = input;
+  }
+
+  if( TheSetup.Shield == SHIELD_1DI2DO )
+    return;
+
+
+  //  Counter 4 - SHIELD_3DI from here
+  input = bitRead( IN_4_PORT, IN_4_PIN );
+  input = (input==1 )?0:1;
+  if( Counter4.current_val  == input && input == TheSetup.CountOnLH)
+  {
+    if( Counter4.poll_counter  != 0xff ) // allready sent
+    {
+      Counter4.poll_counter ++;
+      if( Counter4.poll_counter == TheSetup.PollCount )
+      {
+         Counter4.Counter++;
+         Counter4.poll_counter  = 0xff;
+      }
+    }
+  }
+  else
+  {
+    Counter4.poll_counter = 0;
+    Counter4.current_val  = input;
+  }
+
+  //  Counter 5
+  input = bitRead( IN_5_PORT, IN_5_PIN );
+  input = (input==1 )?0:1;
+  if( Counter5.current_val  == input && input == TheSetup.CountOnLH)
+  {
+    if( Counter5.poll_counter  != 0xff ) // allready sent
+    {
+      Counter5.poll_counter ++;
+      if( Counter5.poll_counter == TheSetup.PollCount )
+      {
+         Counter5.Counter++;
+         Counter5.poll_counter  = 0xff;
+      }
+    }
+  }
+  else
+  {
+    Counter5.poll_counter = 0;
+    Counter5.current_val  = input;
   }
 }
 
@@ -274,6 +374,7 @@ void SetupDefault()
   TheSetup.PollCount = 3;     // Poll count till accepted
   TheSetup.CountOnLH = 1;     // LH Edge
   TheSetup.SendCycle = 5000;  // Cycle in ms
+  TheSetup.Shield = 0;        // No Shield 
 }
 
 #define EEPROM_ADDRESS  0
@@ -330,6 +431,7 @@ void DoCheckRxData()
 // ----------------------------------------------------------------------------------
 // RESET          ( Restart controller)
 // INFO           ( print settings)
+// HARD           ( Hardware, 0=noShield, 1=1DI2DO, 2=3DI)
 // POLL 1000      ( Poll cycle in ms )
 // EDGE 1|0       ( count on Edge HL or LH )
 // SEND 5000      ( send all xxx ms )
@@ -373,7 +475,7 @@ void OnDataReceived()
       result = true;
       callSetupInterrupt = true;
     }
-
+    else
     if( cmd.startsWith("DEBO "))
     {
       if( !checkRange( value, 1, 20 ) )
@@ -384,7 +486,7 @@ void OnDataReceived()
       result = true;
       writeSetup = true;
     }
-  
+    else
     if( cmd.startsWith("EDGE "))
     {
       if( !checkRange( value, 0, 1 ) )
@@ -395,7 +497,7 @@ void OnDataReceived()
       result = true;
       writeSetup = true;
     }
-
+    else
     if( cmd.startsWith("REL1 "))
     {
       if( !checkRange( value, 0, 1 ) )
@@ -405,7 +507,7 @@ void OnDataReceived()
       Serial.println( value, DEC );
       result = true;
     }
-
+    else
     if( cmd.startsWith("REL2 "))
     {
       if( !checkRange( value, 0, 1 ) )
@@ -415,8 +517,8 @@ void OnDataReceived()
       Serial.println( value, DEC );
       result = true;
     }
-
-    if( cmd.startsWith("REL3 "))
+    else
+    if( TheSetup.Shield == SHIELD_1DI2DO &&  cmd.startsWith("REL3 "))
     {
       if( !checkRange( value, 0, 1 ) )
         return;
@@ -425,8 +527,8 @@ void OnDataReceived()
       Serial.println( value, DEC );
       result = true;
     }
-
-    if( cmd.startsWith("REL4 "))
+    else
+    if( TheSetup.Shield == SHIELD_1DI2DO && cmd.startsWith("REL4 "))
     {
       if( !checkRange( value, 0, 1 ) )
         return;
@@ -435,7 +537,7 @@ void OnDataReceived()
       Serial.println( value, DEC );
       result = true;
     }
-
+    else
     if( cmd.startsWith("RPU1 "))
     {
       if( !checkRange( value, 1, 255 ) )
@@ -447,7 +549,7 @@ void OnDataReceived()
       Serial.println( "REL1 1" );
       result = true;
     }
-
+    else
     if( cmd.startsWith("RPU2 "))
     {
       if( !checkRange( value, 0, 255 ) )
@@ -459,8 +561,8 @@ void OnDataReceived()
       Serial.println( "REL2 1" );
       result = true;
     }
-
-    if( cmd.startsWith("RPU3 "))
+    else
+    if( TheSetup.Shield == SHIELD_1DI2DO && cmd.startsWith("RPU3 "))
     {
       if( !checkRange( value, 1, 255 ) )
         return;
@@ -471,8 +573,8 @@ void OnDataReceived()
       Serial.println( "REL3 1" );
       result = true;
     }
-
-    if( cmd.startsWith("RPU4 "))
+    else
+    if( TheSetup.Shield == SHIELD_1DI2DO && cmd.startsWith("RPU4 "))
     {
       if( !checkRange( value, 0, 255 ) )
         return;
@@ -483,8 +585,19 @@ void OnDataReceived()
       Serial.println( "REL4 1" );
       result = true;
     }
-
-  
+    else
+    if( cmd.startsWith("HARD "))
+    {
+      if( !checkRange( value, 0, 2 ) )
+        return;
+      TheSetup.Shield = value;
+      Serial.print( "HARD ");
+      Serial.println( value, DEC );
+      setup_in_out();
+      writeSetup = true;
+      result = true;
+    }
+    else
     if( cmd.startsWith("SEND "))
     {
       if( !checkRange( value, 1000, 50000 ) )
@@ -509,6 +622,7 @@ void OnDataReceived()
 
 void DoCmdInfo()
 {
+    Serial.print( "HARD "); Serial.println( TheSetup.Shield, DEC );
     Serial.print( "POLL "); Serial.println( TheSetup.PollCycle, DEC );
     Serial.print( "DEBO "); Serial.println( TheSetup.PollCount, DEC );
     Serial.print( "EDGE "); Serial.println(TheSetup.CountOnLH, DEC );
@@ -561,3 +675,28 @@ boolean isNumeric(String str)
 }
 
 
+void PrintHex16(word data)
+{
+ char tmp[5];
+ byte first;
+ int j=0;
+
+   first = (data >> 12) | 48;
+   if (first > 57) tmp[0] = first + (byte)7;
+   else tmp[0] = first ;
+  
+   first = ((data>>8) & 0x0F) | 48;
+   if (first > 57) tmp[1] = first + (byte)7; 
+   else tmp[1] = first;
+
+   first = ((data>>4) & 0x0F) | 48;
+   if (first > 57) tmp[2] = first + (byte)7; 
+   else tmp[2] = first;
+
+   first = (data & 0x0F) | 48;
+   if (first > 57) tmp[3] = first + (byte)7; 
+   else tmp[3] = first;
+   
+   tmp[4] = 0;
+   Serial.print(tmp);
+}

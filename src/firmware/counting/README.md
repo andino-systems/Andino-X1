@@ -1,4 +1,4 @@
-Andino X1 Firmware Sample – Counting Events
+Andino X1 Firmware Sample
 ==========
 
 [Andino X1][1], a base board that allows the raspberry pi to be used in an industrial environment.
@@ -8,7 +8,12 @@ Andino X1 Firmware Sample – Counting Events
 Overview
 ====
 
-This example counts impulses at the digital inputs. Count stops are cyclically sent to the Raspberry. The digital inputs are additionally de-bounced. On the other hand, the relays can be switched or pulsed. The settings of the firmware are changed via commands and are stored in the eeprom.
+This example counts impulses at the digital inputs. 
+Count stops are cyclically sent to the Raspberry. 
+The digital inputs are additionally de-bounced. 
+On the other hand, the relays can be switched or pulsed. The settings of the firmware are changed via commands and are stored in the eeprom.
+This Version consider the extension boards [3DI][4] and [1DI2DO][5] (Command HARD).
+The Communication runs with 38400 Baud.
 
 This Sample needs the [TimerOne][3] library.
 
@@ -21,6 +26,7 @@ Every command has to be terminated by CR or LF. Message ends with CR and LF.
 --- | --- | --- | ---
 RESET | none | Restart the Controller | RESET
 INFO | none| Prints the current settings | INFO
+HARD | 0=noShield, 1=1DI2DO, 2=3DI | Set the Hardware configuration | 0 - none
 POLL | Cycle in ms | Sets the sampling cycle of the digital inputs [in ms] | POLL 1000
 EDGE | HL(0) LH(1) | Count on edge HL or LH | EDGE
 SEND | Cycle in ms | The counter will send all nnn milliseconds | SEND 5000
@@ -31,12 +37,26 @@ RPU1 | pulse in sec | Pulse the Relay 1 for nns seconds | RPU1 2
 RPU2 | pulse in sec | Pulse the Relay 2 for nns seconds | RPU2 2
 
 ### Messages from the Controller
-**Message** | Arguments | Action | Example 
---- | --- | --- | ---
-CNTR | messageID counter1 counter2 | Send the counter every [SEND] millis | CNTR 9998 12 32
-STAT | messageID pin1 pin2 | Send the state of the pins every [SEND] millis | CNTR 9998 12 32
 
-Message-ID increments on every Message to check any lost.
+:Message-ID{counter1,counter2,..}{state1,state2}
+
+The Message starts with a ':'. After that follows a Message-ID. This is a modulo HEX Counter from 0..FFFF.  
+Then within a '{'  '}' the counter follows. The number of counter depends on the Hardware.  
+The Counter are HEX encoded and runs from 0 to FFFF (modulo).  
+Then again within a '{'  '}' the current state of the inputs follows. 0-off, 1-on.
+The number depends on the Hardware.
+The Message ends with a CR / LF [0x0d + 0x0a]
+
+Example
+:0040{0000,0000,0000}{0,0,0}
+:0041{0000,0000,0000}{0,0,0}
+:0042{0000,0000,0000}{0,0,0}
+:0043{0000,0000,0000}{0,0,0}
+:0044{0000,0000,0000}{0,0,0}
+:0045{0000,0000,0000}{0,0,0}
+:0046{0000,0000,0000}{0,0,0}
+:0047{0000,0000,0000}{0,0,0}
+:0048{0000,0000,0000}{0,0,0}
 
 
 Author
@@ -48,3 +68,5 @@ Author
 [1]:https://andino.systems/andino-x1/
 [2]:https://github.com/andino-systems/Andino-X1
 [3]:https://code.google.com/archive/p/arduino-timerone/downloads
+[4]:https://github.com/andino-systems/Andino-X1/tree/master/doc/3DI
+[5]:https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO
