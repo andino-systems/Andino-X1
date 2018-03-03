@@ -7,7 +7,7 @@ pip install pyserial
 Create file 'readAMA0.py'
 ```python
 import serial
-ser=serial.Serial('/dev/ttyAMA0', 19200, timeout=30)
+ser=serial.Serial('/dev/ttyAMA0', 38400, timeout=30)
 line=ser.readline()
 print line
 ```
