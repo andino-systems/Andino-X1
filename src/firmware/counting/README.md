@@ -13,7 +13,8 @@ Count stops are cyclically sent to the Raspberry.
 The digital inputs are additionally de-bounced. 
 On the other hand, the relays can be switched or pulsed. The settings of the firmware are changed via commands and are stored in the eeprom.
 This Version consider the extension boards [3DI][4] and [1DI2DO][5] (Command HARD).
-The Communication runs with 38400 Baud.
+  
+The Communication runs with **38400 Baud**.
 
 This Sample needs the [TimerOne][3] library.
 
@@ -28,11 +29,14 @@ RESET | none | Restart the Controller | RESET
 INFO | none| Prints the current settings | INFO
 HARD | 0=noShield, 1=1DI2DO, 2=3DI | Set the Hardware configuration | 0 - none
 POLL | Cycle in ms | Sets the sampling cycle of the digital inputs [in ms] | POLL 1000
+SKIP | Number of polls | Skip n Scans after pulse reconized | 0
 EDGE | HL(0) LH(1) | Count on edge HL or LH | EDGE
 SEND | Cycle in ms | The counter will send all nnn milliseconds | SEND 5000
 DEBO | Number of polls | Sets the debounce count. The signal has to be stable for nn polls | DEBO 100
+POWR | state (0 or 1)| Power-Out Relay is switched on or off | REL1 1
 REL1 | state (0 or 1)| Relay 1 is switched on or off | REL1 1
 REL2 | state (0 or 1)| Relay 2 is switched on or off | REL2 1
+REL3 | state (0 or 1)| Relay 3 is switched on or off | REL3 1
 RPU1 | pulse in sec | Pulse the Relay 1 for nns seconds | RPU1 2
 RPU2 | pulse in sec | Pulse the Relay 2 for nns seconds | RPU2 2
 
@@ -40,14 +44,14 @@ RPU2 | pulse in sec | Pulse the Relay 2 for nns seconds | RPU2 2
 
 :Message-ID{counter1,counter2,..}{state1,state2}
 
-The Message starts with a ':'. After that follows a Message-ID. This is a modulo HEX Counter from 0..FFFF.  
-Then within a '{'  '}' the counter follows. The number of counter depends on the Hardware.  
+The Message starts with a ':'. After that follows a Message-ID. This is a modulo HEX Counter from 0..FFFF.    
+Then within a '{'  '}' the counter follows. The number of counter depends on the Hardware shields.   
 The Counter are HEX encoded and runs from 0 to FFFF (modulo).  
-Then again within a '{'  '}' the current state of the inputs follows. 0-off, 1-on.
-The number depends on the Hardware.
+Then again within a '{'  '}' the current state of the inputs follows. 0-off, 1-on.  
+The number depends on the Hardware shields.
 The Message ends with a CR / LF [0x0d + 0x0a]
 
-Example
+Example   
 :0040{0002,0000,000B}{0,0,0}  
 :0041{0002,0000,000B}{0,0,0}  
 :0042{0004,0000,000C}{0,0,0}  
