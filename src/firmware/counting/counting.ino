@@ -1,3 +1,12 @@
+//
+//    ###    ##    ## ########  #### ##    ##  #######     ##     ##    ##   
+//   ## ##   ###   ## ##     ##  ##  ###   ## ##     ##     ##   ##   ####   
+//  ##   ##  ####  ## ##     ##  ##  ####  ## ##     ##      ## ##      ##   
+// ##     ## ## ## ## ##     ##  ##  ## ## ## ##     ##       ###       ##   
+// ######### ##  #### ##     ##  ##  ##  #### ##     ##      ## ##      ##   
+// ##     ## ##   ### ##     ##  ##  ##   ### ##     ##     ##   ##     ##   
+// ##     ## ##    ## ########  #### ##    ##  #######     ##     ##  ###### 
+//
 #include <EEPROM.h>
 #include "TimerOne.h"
 #include <avr/wdt.h>
@@ -56,6 +65,7 @@ struct Setup
   unsigned int  PollCycle;    // Poll cycle in ms
   byte          PollCount;    // Poll-Count till level is stable
   bool          CountOnLH;    // Count on .. edge
+  byte          SkipCount;    // Skip nn Scans after recognize a pulse
   unsigned int  SendCycle;    // Send cycle in ms
   byte          Shield;       // 0 = none, 1 = 1DI2DO, 2 = 3DI
 } TheSetup;
@@ -64,6 +74,7 @@ struct Setup
 typedef struct {
   byte current_val = 0;
   byte poll_counter = 0;
+  byte skip_counter = 0;
   unsigned long Counter = 0;
 } CounterControl;
 
@@ -223,124 +234,55 @@ void loop()
 
 void timerInterrupt()
 {
+  byte input;
+  
   if (ledState == LOW)
     ledState = HIGH;
   else
     ledState = LOW;
   digitalWrite(LED_PIN, ledState);
-  //  Counter 1 
-  byte input = bitRead( IN_1_PORT, IN_1_PIN );
-  input = (input==1 )?0:1;
-  if( Counter1.current_val  == input && input == TheSetup.CountOnLH)
-  {
-    if( Counter1.poll_counter  != 0xff ) // schon gemeldet
-    {
-      Counter1.poll_counter ++;
-      if( Counter1.poll_counter == TheSetup.PollCount )
-      {
-         Counter1.Counter++;
-         Counter1.poll_counter  = 0xff;
-      }
-    }
-  }
-  else
-  {
-    Counter1.poll_counter = 0;
-    Counter1.current_val  = input;
-  }
 
-  //  Counter 2
-  input = bitRead( IN_2_PORT, IN_2_PIN );
-  input = (input==1 )?0:1;
-  if( Counter2.current_val  == input && input == TheSetup.CountOnLH)
-  {
-    if( Counter2.poll_counter  != 0xff ) // allready sent
-    {
-      Counter2.poll_counter ++;
-      if( Counter2.poll_counter == TheSetup.PollCount )
-      {
-         Counter2.Counter++;
-         Counter2.poll_counter  = 0xff;
-      }
-    }
-  }
-  else
-  {
-    Counter2.poll_counter = 0;
-    Counter2.current_val  = input;
-  }
-
+  doCounter( &Counter1, bitRead( IN_1_PORT, IN_1_PIN ) );
+  doCounter( &Counter2, bitRead( IN_2_PORT, IN_2_PIN ) );
   if( TheSetup.Shield == SHIELD_NONE )
     return;
-    
-  //  Counter 3
-  input = bitRead( IN_3_PORT, IN_3_PIN );
-  input = (input==1 )?0:1;
-  if( Counter3.current_val  == input && input == TheSetup.CountOnLH)
-  {
-    if( Counter3.poll_counter  != 0xff ) // allready sent
-    {
-      Counter3.poll_counter ++;
-      if( Counter3.poll_counter == TheSetup.PollCount )
-      {
-         Counter3.Counter++;
-         Counter3.poll_counter  = 0xff;
-      }
-    }
-  }
-  else
-  {
-    Counter3.poll_counter = 0;
-    Counter3.current_val  = input;
-  }
-
+  doCounter( &Counter3, bitRead( IN_3_PORT, IN_3_PIN ) );
   if( TheSetup.Shield == SHIELD_1DI2DO )
     return;
-
-
-  //  Counter 4 - SHIELD_3DI from here
-  input = bitRead( IN_4_PORT, IN_4_PIN );
-  input = (input==1 )?0:1;
-  if( Counter4.current_val  == input && input == TheSetup.CountOnLH)
-  {
-    if( Counter4.poll_counter  != 0xff ) // allready sent
-    {
-      Counter4.poll_counter ++;
-      if( Counter4.poll_counter == TheSetup.PollCount )
-      {
-         Counter4.Counter++;
-         Counter4.poll_counter  = 0xff;
-      }
-    }
-  }
-  else
-  {
-    Counter4.poll_counter = 0;
-    Counter4.current_val  = input;
-  }
-
-  //  Counter 5
-  input = bitRead( IN_5_PORT, IN_5_PIN );
-  input = (input==1 )?0:1;
-  if( Counter5.current_val  == input && input == TheSetup.CountOnLH)
-  {
-    if( Counter5.poll_counter  != 0xff ) // allready sent
-    {
-      Counter5.poll_counter ++;
-      if( Counter5.poll_counter == TheSetup.PollCount )
-      {
-         Counter5.Counter++;
-         Counter5.poll_counter  = 0xff;
-      }
-    }
-  }
-  else
-  {
-    Counter5.poll_counter = 0;
-    Counter5.current_val  = input;
-  }
+  doCounter( &Counter4, bitRead( IN_4_PORT, IN_4_PIN ) );
+  doCounter( &Counter5, bitRead( IN_5_PORT, IN_5_PIN ) );
+  
 }
 
+void doCounter( CounterControl * pCounter, byte input )
+{
+  if( pCounter->skip_counter == 0 )
+  {
+    input = (input==1 )?0:1;
+    if( pCounter->current_val  == input && input == TheSetup.CountOnLH)
+    {
+      if( pCounter->poll_counter  != 0xff ) // schon gemeldet
+      {
+        pCounter->poll_counter ++;
+        if( pCounter->poll_counter == TheSetup.PollCount )
+        {
+           pCounter->Counter++;
+           pCounter->poll_counter  = 0xff;
+           pCounter->skip_counter = TheSetup.SkipCount;
+        }
+      }
+    }
+    else
+    {
+      pCounter->poll_counter = 0;
+      pCounter->current_val  = input;
+    }
+  }
+  else
+  {
+    pCounter->skip_counter--;
+  }
+}
 
 // ----------------------------------------------------------------------------------
 // Setup
@@ -372,6 +314,7 @@ void SetupDefault()
 {
   TheSetup.PollCycle = 10;    // Poll cykle 
   TheSetup.PollCount = 3;     // Poll count till accepted
+  TheSetup.SkipCount = 0;     // Skip nn Scans after recognize a pulse
   TheSetup.CountOnLH = 1;     // LH Edge
   TheSetup.SendCycle = 5000;  // Cycle in ms
   TheSetup.Shield = 0;        // No Shield 
@@ -432,7 +375,9 @@ void DoCheckRxData()
 // RESET          ( Restart controller)
 // INFO           ( print settings)
 // HARD           ( Hardware, 0=noShield, 1=1DI2DO, 2=3DI)
-// POLL 1000      ( Poll cycle in ms )
+// POLL 10        ( Poll cycle in ms )
+// DEBO 3         ( Debounce n Scans stable to accept )
+// SKIP 3         ( Skip n Scans after pulse reconized )
 // EDGE 1|0       ( count on Edge HL or LH )
 // SEND 5000      ( send all xxx ms )
 // REL1 0|1       ( set releais 1 to on or off )
@@ -470,6 +415,18 @@ void OnDataReceived()
         return;
       TheSetup.PollCycle = value;
       Serial.print( "POLL ");
+      Serial.println( value, DEC );
+      writeSetup = true;
+      result = true;
+      callSetupInterrupt = true;
+    }
+    else
+    if( cmd.startsWith("SKIP "))
+    {
+      if( !checkRange( value, 0, 250 ) )
+        return;
+      TheSetup.SkipCount = value;
+      Serial.print( "SKIP ");
       Serial.println( value, DEC );
       writeSetup = true;
       result = true;
@@ -586,7 +543,7 @@ void OnDataReceived()
       result = true;
     }
     else
-    if( cmd.startsWith("HARD "))
+    if( cmd.startsWith("HARD"))
     {
       if( !checkRange( value, 0, 2 ) )
         return;
@@ -625,10 +582,15 @@ void DoCmdInfo()
     Serial.print( "HARD "); Serial.println( TheSetup.Shield, DEC );
     Serial.print( "POLL "); Serial.println( TheSetup.PollCycle, DEC );
     Serial.print( "DEBO "); Serial.println( TheSetup.PollCount, DEC );
+    Serial.print( "SKIP "); Serial.println( TheSetup.SkipCount, DEC );
     Serial.print( "EDGE "); Serial.println(TheSetup.CountOnLH, DEC );
     Serial.print( "SEND "); Serial.println( TheSetup.SendCycle, DEC);
     Serial.print( "REL1 "); Serial.println( digitalRead(OUT_1), DEC);
     Serial.print( "REL2 "); Serial.println( digitalRead(OUT_2), DEC);
+    Serial.println( "HARD 0 (no extension)" );
+    Serial.println( "HARD 1 (1DI2DO)" );
+    Serial.println( "HARD 2 (2DO)" );
+
 }
 
 void DoCmdReset()
