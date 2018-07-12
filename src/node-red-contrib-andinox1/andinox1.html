@@ -2,10 +2,9 @@
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-andinox1"></i> Type</label>
         <select type="text" id="node-input-filter" style="width: 300px;">
-            <option value="relais1">Relais 1</option>
-            <option value="relais2">Relais 2</option>
-            <option value="counter">Counter events</option>
-            <option value="event">Single events</option>
+            <option value="relay1">Relais 1</option>
+            <option value="relay2">Relais 2</option>
+            <option value="events">Events</option>
         </select>
     </div>
     <div class="form-row">
@@ -16,8 +15,7 @@
 
 <script type="text/x-red" data-help-name="AndinoX1">
     <p>Filters messages from AndinoX1 depending on the given type.</p>
-    <p><b>Counter</b>Filters the counter values out of the stream and send them as {counter1:nn, counter2:nn}</p>
-    <p><b>Single events</b>Filters the single pin state change out of the stream and send them as {pin1:nn, pin2:nn}.</p>
+    <p><b>Events</b>Filters the counter and states values out of the stream and send them as {counter1:nn, counter2:nn, pin1:n, pin2:n}</p>
     <p><b>Relais 1</b>Set the relais 1. Bind the output to tty. Input values can be a boolean or a string 0,1 or true,false or yes,no.</p>
     <p><b>Relais 2</b>Set the relais 2. Bind the output to tty. Input values can be a boolean or a string 0,1 or true,false or yes,no.</p>
 </script>
