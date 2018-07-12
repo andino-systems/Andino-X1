@@ -74,35 +74,35 @@ After the Andino Node
 Usage
 -----
 
-Wire the ttyAMA to the input and set the filter to Events.
+Wire the ttyAMA0 to the input and set the filter to Events.
 Wire the output to ttyAMA0, configure Relais1 or Relais2 and send true/false 0/1 to set the relais.
 
 ### Example
 -----
 
 #### Flow
-![Node Red Example](http://andino.systems/wp-content/uploads/node-red-andinox1-flow.png )
+![Node Red Example](http://andino.systems/wp-content/uploads/node-red-andinox1-flow.png?id=1 )
 
 -----
 
 #### Dashboard
-![Node Red Dashboard](http://andino.systems/wp-content/uploads/node-red-dashboard.png)
+![Node Red Dashboard](http://andino.systems/wp-content/uploads/node-red-dashboard.png?id=1)
 
 -----
 
 #### Properties
-![Node Red - Andino X1 Properies](http://andino.systems/wp-content/uploads/node-red-andinox1-properties.png)
+![Node Red - Andino X1 Properies](http://andino.systems/wp-content/uploads/node-red-andinox1-properties.png?id=1)
 
 -----
 
 #### Output Payload
-![Node Red - Andino X1 Payload](http://andino.systems/wp-content/uploads/node-red-payload-output.png)
+![Node Red - Andino X1 Payload](http://andino.systems/wp-content/uploads/node-red-payload-output.png?id=1)
 
 -----
 
 
 #### Serial Settings
-![Node Red - Andino X1 Serial Settings](https://andino.systems/wp-content/uploads/node-red-andinox1-serial.png)
+![Node Red - Andino X1 Serial Settings](https://andino.systems/wp-content/uploads/node-red-andinox1-serial.png?id=1)
 ----
 Some infos and Samples about Node Red
 
