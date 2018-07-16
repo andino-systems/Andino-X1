@@ -57,6 +57,11 @@ Set Hardware Flow to No, set Device to /dev/ttyAMA0 or /dev/serial0, set BPS to 
 
 ## Add the Driver for the RTC DS3231
 
+When installing the RTC, please note to skip the first pin. The RTC starts at PIN 2 (3.3 Volt).
+Otherwise the RTC will be destroyed.
+
+![Arduino IDE Settings for Andino](install-rtc.png)
+
 Enable I2C and add the Module the RTC DS3231
 
 	sudo nano /boot/config.txt
