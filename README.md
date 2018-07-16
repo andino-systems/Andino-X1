@@ -3,7 +3,7 @@ Andino X1
 
 [Andino X1][1], a base board that allows the raspberry pi to be used in an industrial environment
 
-![Andino X1 - Raspberry Pi on DIN Rail](https://andino.systems/wp-content/uploads/industrielle-raspberry-pi-erweiterung-andino-x1-small.png)  
+![Andino X1 - Raspberry Pi on DIN Rail](https://clearsystems.de/wp-content/uploads/2016/09/Andino-X1-Set.png)  
 
   
 
