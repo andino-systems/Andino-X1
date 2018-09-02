@@ -39,7 +39,7 @@ Via the SPI and the I2C interface of the Raspberry Pi, further hardware extensio
 The integrated, battery-buffered RTC provides the correct time even if no NTP (time) server is available. The high-precision time chip DS3231 from Dallas Semiconductors is used. Due to the internal temperature compensation of the oscillator, the chip achieves a very high accuracy of ± 2ppm at 0 ° C to + 40 ° C.
 
 ## Block diagram
-![Andino X1 - Raspberry Pi on DIN Rail - Block diagram](https://andino.systems/wp-content/uploads/Block.png)
+![Andino X1 - Raspberry Pi on DIN Rail - Block diagram](https://andino.systems/wp-content/uploads/Andino-X1-Block-schema-1024x671.png)
 
 ## Extendable
 The SPI and I2C Busses of the Raspberry Pi and the Arduino Controller are connected with a Pin Header.
