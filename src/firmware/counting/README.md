@@ -3,8 +3,6 @@ Andino X1 Firmware Sample
 
 [Andino X1][1], a base board that allows the raspberry pi to be used in an industrial environment.
 
-![Andino X1 - Raspberry Pi on DIN Rail](https://andino.systems/wp-content/uploads/industrielle-raspberry-pi-erweiterung-andino-x1-small.png)
-
 Overview
 ====
 
@@ -27,7 +25,7 @@ Every command has to be terminated by CR or LF. Message ends with CR and LF.
 --- | --- | --- | ---
 RESET | none | Restart the Controller | RESET
 INFO | none| Prints the current settings | INFO
-HARD | 0=noShield, 1=1DI2DO, 2=3DI | Set the Hardware configuration | 0 - none
+HARD | 0=noShield, 1=1DI2DO, 2=3DI, 3=5DI | Set the Hardware configuration | 0 - none
 POLL | Cycle in ms | Sets the sampling cycle of the digital inputs [in ms] | POLL 1000
 SKIP | Number of polls | Skip n Scans after pulse reconized | 0
 EDGE | HL(0) LH(1) | Count on edge HL or LH | EDGE
@@ -61,6 +59,12 @@ Example
 :0046{000A,0000,0000}{0,0,1}  
 :0047{000C,0000,0000}{1,0,0}  
 :0048{0010,0000,0000}{0,0,0}  
+
+
+Download
+-----
+
+Please see in the GIT Content the current INO File: [Version002.ino](Version002.ino)  
 
 
 Author

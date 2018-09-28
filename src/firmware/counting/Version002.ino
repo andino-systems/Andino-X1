@@ -1,12 +1,55 @@
 //
-//    ###    ##    ## ########  #### ##    ##  #######     ##     ##    ##   
-//   ## ##   ###   ## ##     ##  ##  ###   ## ##     ##     ##   ##   ####   
-//  ##   ##  ####  ## ##     ##  ##  ####  ## ##     ##      ## ##      ##   
-// ##     ## ## ## ## ##     ##  ##  ## ## ## ##     ##       ###       ##   
-// ######### ##  #### ##     ##  ##  ##  #### ##     ##      ## ##      ##   
-// ##     ## ##   ### ##     ##  ##  ##   ### ##     ##     ##   ##     ##   
-// ##     ## ##    ## ########  #### ##    ##  #######     ##     ##  ###### 
+//       #                                     #     #   #   
+//      # #   #    # #####  # #    #  ####      #   #   ##   
+//     #   #  ##   # #    # # ##   # #    #      # #   # #   
+//    #     # # #  # #    # # # #  # #    #       #      #   
+//    ####### #  # # #    # # #  # # #    #      # #     #   
+//    #     # #   ## #    # # #   ## #    #     #   #    #   
+//    #     # #    # #####  # #    #  ####     #     # #####
 //
+// Default / Sample Firmware for the Andino X1.
+// 
+// This example counts impulses at the digital inputs. Count stops are cyclically sent to the Raspberry. 
+// The digital inputs are additionally de-bounced. On the other hand, the relays can be switched or pulsed.
+// The settings of the firmware are changed via commands and are stored in the eeprom. 
+// This Version consider the extension boards 3DI and 1DI2DO (Command HARD).
+// The Communication runs with 38400 Baud.
+// This Sample needs the TimerOne library.
+// Interface, Commands
+// All commands or messages are sent and received via /dev/ttyS0. 
+// Every command has to be terminated by CR or LF. Message ends with CR and LF.
+// RESET          ( Restart controller)
+// INFO           ( print settings)
+// HARD           ( Hardware, 0=noShield, 1=1DI2DO, 2=3DI, 3=5DI)
+// POLL 10        ( Poll cycle in ms )
+// DEBO 3         ( Debounce n Scans stable to accept )
+// SKIP 3         ( Skip n Scans after pulse reconized )
+// EDGE 1|0       ( count on Edge HL or LH )
+// SEND 5000      ( send all xxx ms )
+// REL1 0|1       ( set releais 1 to on or off )
+// REL2 0|1       ( set releais 2 to on or off )
+// REL3 0|1       ( set releais 3 to on or off )
+// REL4 0|1       ( set releais 4 to on or off )
+// RPU1 1000      ( pulse relais 1 for nnn ms )
+// RPU2 1000      ( pulse relais 2 for nnn ms )
+//
+// Message from the Firmware to the Raspberry
+//
+// :Message-ID{counter1,counter2,..}{state1,state2}
+// 
+// The Message starts with a ':'. After that follows a Message-ID. This is a modulo HEX Counter from 0..FFFF.
+// Then within a '{' '}' the counter follows. The number of counter depends on the Hardware shields.
+// The Counter are HEX encoded and runs from 0 to FFFF (modulo).
+// Then again within a '{' '}' the current state of the inputs follows. 0-off, 1-on.
+// The number depends on the Hardware shields. The Message ends with a CR / LF [0x0d + 0x0a]
+// Example
+// :0040{0002,0000,000B}{0,0,0}
+// :0041{0002,0000,000B}{0,0,0}
+// :0042{0004,0000,000C}{0,0,0}
+// :0043{0004,0000,000C}{0,0,0}
+// :0044{0008,0000,000F}{0,0,1}
+// :0045{0008,0000,000F}{0,0,1}
+
 #include <EEPROM.h>
 #include "TimerOne.h"
 #include <avr/wdt.h>
@@ -16,6 +59,7 @@
 #define SHIELD_NONE 0
 #define SHIELD_1DI2DO 1
 #define SHIELD_3DI 2
+#define SHIELD_5DI 3
 
 #define IN_1       7 // PD7
 #define IN_1_PORT  PIND
@@ -25,20 +69,30 @@
 #define IN_2_PORT  PIND
 #define IN_2_PIN   6
 
-// Only available with 3DI or 1DI2DO shield
+// Only available with 3DI or 1DI2DO or 5DI shield
 #define IN_3       2 // PD2
 #define IN_3_PORT  PIND
 #define IN_3_PIN   2
 
-// Only available with 3DI
-#define IN_4       2 // PC4
+// Only available with 3DI or 5DI
+#define IN_4       27 // PC4
 #define IN_4_PORT  PINC
 #define IN_4_PIN   4
 
-// Only available with 3DI
-#define IN_5       2 // PC5
+// Only available with 3DI or 5DI
+#define IN_5       28 // PC5
 #define IN_5_PORT  PINC
 #define IN_5_PIN   5
+
+// Only available with 5DI (PB4)
+#define IN_6       12 // PB4
+#define IN_6_PORT  PINB
+#define IN_6_PIN   4
+
+// Only available with 5DI (PB3)
+#define IN_7       11 // PB3
+#define IN_7_PORT  PINB
+#define IN_7_PIN   3
 
 
 #define OUT_1     14 // PC0 analog 0
@@ -83,6 +137,8 @@ CounterControl Counter2;
 CounterControl Counter3;
 CounterControl Counter4;
 CounterControl Counter5;
+CounterControl Counter6;
+CounterControl Counter7;
 
 int ledState = LOW;
 
@@ -134,6 +190,14 @@ void setup_in_out()
     pinMode(IN_5,INPUT); 
     digitalWrite(IN_5, HIGH); // activate pull up resistor 
   }
+  if( TheSetup.Shield == SHIELD_5DI )
+  {  
+    pinMode(IN_6,INPUT); 
+    digitalWrite(IN_6, HIGH); // activate pull up resistor 
+    pinMode(IN_7,INPUT); 
+    digitalWrite(IN_7, HIGH); // activate pull up resistor 
+  }
+  
 }
 
 void setup_interrupt()
@@ -163,38 +227,52 @@ void loop()
     PrintHex16(Counter1.Counter); 
     Serial.write( ',' );
     PrintHex16(Counter2.Counter);
-    if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI )
+    if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI)
     {
       Serial.write( ',' );
       PrintHex16(Counter3.Counter);
     }
-    if( TheSetup.Shield == SHIELD_3DI )
+    if( TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI)
     {
       Serial.write( ',' );
       PrintHex16(Counter4.Counter);
       Serial.write( ',' );
       PrintHex16(Counter5.Counter);
     }    
+    if( TheSetup.Shield == SHIELD_5DI)
+    {
+      Serial.write( ',' );
+      PrintHex16(Counter6.Counter);
+      Serial.write( ',' );
+      PrintHex16(Counter7.Counter);
+    }    
     Serial.write( "}{" );
     Serial.print(Counter1.current_val, DEC ); 
     Serial.write( ',' );
     Serial.print(Counter2.current_val, DEC ); 
-    if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI )
+    if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI)
     {
       Serial.write( ',' );
       Serial.print(Counter3.current_val, DEC );
     }
-    if( TheSetup.Shield == SHIELD_3DI )
+    if( TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI )
     {
       Serial.write( ',' );
       Serial.print(Counter4.current_val, DEC );
       Serial.write( ',' );
       Serial.print(Counter5.current_val, DEC );
     }
+    if( TheSetup.Shield == SHIELD_5DI )
+    {
+      Serial.write( ',' );
+      Serial.print(Counter6.current_val, DEC );
+      Serial.write( ',' );
+      Serial.print(Counter7.current_val, DEC );
+    }
     Serial.println("}");
   }
 
-  if (currentMillis - lastSecondMillis  >= 1000) 
+  if (currentMillis - lastSecondMillis  >= 100) 
   {
     lastSecondMillis = currentMillis;
     if( Relais1.puls_timer != 0 )
@@ -251,6 +329,10 @@ void timerInterrupt()
     return;
   doCounter( &Counter4, bitRead( IN_4_PORT, IN_4_PIN ) );
   doCounter( &Counter5, bitRead( IN_5_PORT, IN_5_PIN ) );
+  if( TheSetup.Shield == SHIELD_3DI )
+    return;
+  doCounter( &Counter6, bitRead( IN_6_PORT, IN_6_PIN ) );
+  doCounter( &Counter7, bitRead( IN_7_PORT, IN_7_PIN ) );
   
 }
 
@@ -374,7 +456,7 @@ void DoCheckRxData()
 // ----------------------------------------------------------------------------------
 // RESET          ( Restart controller)
 // INFO           ( print settings)
-// HARD           ( Hardware, 0=noShield, 1=1DI2DO, 2=3DI)
+// HARD           ( Hardware, 0=noShield, 1=1DI2DO, 2=3DI, 3=5DI)
 // POLL 10        ( Poll cycle in ms )
 // DEBO 3         ( Debounce n Scans stable to accept )
 // SKIP 3         ( Skip n Scans after pulse reconized )
@@ -545,7 +627,7 @@ void OnDataReceived()
     else
     if( cmd.startsWith("HARD"))
     {
-      if( !checkRange( value, 0, 2 ) )
+      if( !checkRange( value, 0, 3 ) )
         return;
       TheSetup.Shield = value;
       Serial.print( "HARD ");
@@ -557,7 +639,7 @@ void OnDataReceived()
     else
     if( cmd.startsWith("SEND "))
     {
-      if( !checkRange( value, 1000, 50000 ) )
+      if( !checkRange( value, 100, 50000 ) )
         return;
        TheSetup.SendCycle = value;
       Serial.print( "SEND ");
@@ -589,8 +671,8 @@ void DoCmdInfo()
     Serial.print( "REL2 "); Serial.println( digitalRead(OUT_2), DEC);
     Serial.println( "HARD 0 (no extension)" );
     Serial.println( "HARD 1 (1DI2DO)" );
-    Serial.println( "HARD 2 (2DO)" );
-
+    Serial.println( "HARD 2 (3DI)" );
+    Serial.println( "HARD 3 (5DO)" );
 }
 
 void DoCmdReset()

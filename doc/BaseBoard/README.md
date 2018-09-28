@@ -209,3 +209,7 @@ Pin definition for In- and outputs:
 		digitalWrite(OUT_2, 0);
 		if( bitRead( IN_1_PORT, IN_1_PIN ) )
 		{...
+
+Pinout of the Extension Slot
+
+![Extension Slot](extension.png)
