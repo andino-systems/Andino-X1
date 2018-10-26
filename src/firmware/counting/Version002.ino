@@ -26,6 +26,7 @@
 // SKIP 3         ( Skip n Scans after pulse reconized )
 // EDGE 1|0       ( count on Edge HL or LH )
 // SEND 5000      ( send all xxx ms )
+// CHNG 0|1       ( send on Pin Change - carefull if many changes)
 // REL1 0|1       ( set releais 1 to on or off )
 // REL2 0|1       ( set releais 2 to on or off )
 // REL3 0|1       ( set releais 3 to on or off )
@@ -49,6 +50,9 @@
 // :0043{0004,0000,000C}{0,0,0}
 // :0044{0008,0000,000F}{0,0,1}
 // :0045{0008,0000,000F}{0,0,1}
+#define VERSION 181026
+// History:
+// 181026: New Command CHNG, Version in Info
 
 #include <EEPROM.h>
 #include "TimerOne.h"
@@ -122,6 +126,7 @@ struct Setup
   byte          SkipCount;    // Skip nn Scans after recognize a pulse
   unsigned int  SendCycle;    // Send cycle in ms
   byte          Shield;       // 0 = none, 1 = 1DI2DO, 2 = 3DI
+  byte          SendOnChange; // 0 = Send only in clycle, 1 = send on Demand (Pin Change)
 } TheSetup;
 
 // ---------------------- [ Input & Debounce ] ----------------
@@ -152,6 +157,8 @@ RelaisControl Relais1;
 RelaisControl Relais2;
 RelaisControl Relais3;
 RelaisControl Relais4;
+
+bool pinChanged = false;
 
 void setup() 
 {
@@ -218,8 +225,10 @@ void loop()
 {
   DoCheckRxData();
   unsigned long currentMillis = millis();
-  if (currentMillis - lastSendMillis  >= TheSetup.SendCycle) 
+  if(   (currentMillis - lastSendMillis  >= TheSetup.SendCycle) 
+     || (TheSetup.SendOnChange && pinChanged ) )
   {
+    pinChanged = false;
     lastSendMillis = currentMillis;
     Serial.write( ':' );
     PrintHex16(++loopCounter); 
@@ -348,6 +357,7 @@ void doCounter( CounterControl * pCounter, byte input )
         pCounter->poll_counter ++;
         if( pCounter->poll_counter == TheSetup.PollCount )
         {
+           pinChanged = true;
            pCounter->Counter++;
            pCounter->poll_counter  = 0xff;
            pCounter->skip_counter = TheSetup.SkipCount;
@@ -398,8 +408,9 @@ void SetupDefault()
   TheSetup.PollCount = 3;     // Poll count till accepted
   TheSetup.SkipCount = 0;     // Skip nn Scans after recognize a pulse
   TheSetup.CountOnLH = 1;     // LH Edge
-  TheSetup.SendCycle = 5000;  // Cycle in ms
+  TheSetup.SendCycle = 2000;  // Cycle in ms
   TheSetup.Shield = 0;        // No Shield 
+  TheSetup.SendOnChange = 0;  // No Send on Pin Change 
 }
 
 #define EEPROM_ADDRESS  0
@@ -495,10 +506,10 @@ void OnDataReceived()
     {
       if( !checkRange( value, 10, 1000 ) )
         return;
-      TheSetup.PollCycle = value;
       Serial.print( "POLL ");
       Serial.println( value, DEC );
-      writeSetup = true;
+      writeSetup = TheSetup.PollCycle != value;
+      TheSetup.PollCycle = value;
       result = true;
       callSetupInterrupt = true;
     }
@@ -507,10 +518,10 @@ void OnDataReceived()
     {
       if( !checkRange( value, 0, 250 ) )
         return;
-      TheSetup.SkipCount = value;
       Serial.print( "SKIP ");
       Serial.println( value, DEC );
-      writeSetup = true;
+      writeSetup = TheSetup.SkipCount != value;
+      TheSetup.SkipCount = value;
       result = true;
       callSetupInterrupt = true;
     }
@@ -519,11 +530,11 @@ void OnDataReceived()
     {
       if( !checkRange( value, 1, 20 ) )
         return;
-      TheSetup.PollCount = value;
       Serial.print( "DEBO ");
       Serial.println( value, DEC );
+      writeSetup = TheSetup.PollCount != value;
+      TheSetup.PollCount = value;
       result = true;
-      writeSetup = true;
     }
     else
     if( cmd.startsWith("EDGE "))
@@ -533,8 +544,9 @@ void OnDataReceived()
       TheSetup.CountOnLH = value;
       Serial.print( "EDGE ");
       Serial.println( value, DEC );
+      writeSetup = TheSetup.CountOnLH != value;
+      TheSetup.CountOnLH = value;
       result = true;
-      writeSetup = true;
     }
     else
     if( cmd.startsWith("REL1 "))
@@ -629,11 +641,22 @@ void OnDataReceived()
     {
       if( !checkRange( value, 0, 3 ) )
         return;
-      TheSetup.Shield = value;
       Serial.print( "HARD ");
       Serial.println( value, DEC );
       setup_in_out();
-      writeSetup = true;
+      writeSetup = TheSetup.Shield != value;
+      TheSetup.Shield = value;
+      result = true;
+    }
+    else
+    if( cmd.startsWith("CHNG"))
+    {
+      if( !checkRange( value, 0, 1 ) )
+        return;
+      Serial.print( "CHNG ");
+      Serial.println( value, DEC );
+      writeSetup = TheSetup.SendOnChange != value;
+      TheSetup.SendOnChange = value;
       result = true;
     }
     else
@@ -641,10 +664,10 @@ void OnDataReceived()
     {
       if( !checkRange( value, 100, 50000 ) )
         return;
-       TheSetup.SendCycle = value;
       Serial.print( "SEND ");
       Serial.println( value, DEC );
-      writeSetup = true;
+      writeSetup = TheSetup.SendCycle != value;
+      TheSetup.SendCycle = value;
       result = true;
     }
   }
@@ -667,12 +690,14 @@ void DoCmdInfo()
     Serial.print( "SKIP "); Serial.println( TheSetup.SkipCount, DEC );
     Serial.print( "EDGE "); Serial.println(TheSetup.CountOnLH, DEC );
     Serial.print( "SEND "); Serial.println( TheSetup.SendCycle, DEC);
+    Serial.print( "CHNG "); Serial.println( TheSetup.SendOnChange, DEC);
     Serial.print( "REL1 "); Serial.println( digitalRead(OUT_1), DEC);
     Serial.print( "REL2 "); Serial.println( digitalRead(OUT_2), DEC);
     Serial.println( "HARD 0 (no extension)" );
     Serial.println( "HARD 1 (1DI2DO)" );
     Serial.println( "HARD 2 (3DI)" );
     Serial.println( "HARD 3 (5DO)" );
+    Serial.print( "VERS " ); Serial.println(VERSION);
 }
 
 void DoCmdReset()
