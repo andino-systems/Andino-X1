@@ -31,6 +31,7 @@ SKIP | Number of polls | Skip n Scans after pulse reconized | 0
 EDGE | HL(0) LH(1) | Count on edge HL or LH | EDGE
 SEND | Cycle in ms | The counter will send all nnn milliseconds | SEND 5000
 CHNG | Send on Change | Send if any Pin changes. Carefull if many changes | CHNG 1
+CNTR | Send Counter | Send counter+states(1) or only states(0) (default 1) | CNTR 0
 DEBO | Number of polls | Sets the debounce count. The signal has to be stable for nn polls | DEBO 100
 POWR | state (0 or 1)| Power-Out Relay is switched on or off | REL1 1
 REL1 | state (0 or 1)| Relay 1 is switched on or off | REL1 1

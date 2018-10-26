@@ -27,6 +27,7 @@
 // EDGE 1|0       ( count on Edge HL or LH )
 // SEND 5000      ( send all xxx ms )
 // CHNG 0|1       ( send on Pin Change - carefull if many changes)
+// CNTR 0|1       ( Send counter, Default 1 otherwise on Pin States )
 // REL1 0|1       ( set releais 1 to on or off )
 // REL2 0|1       ( set releais 2 to on or off )
 // REL3 0|1       ( set releais 3 to on or off )
@@ -127,6 +128,7 @@ struct Setup
   unsigned int  SendCycle;    // Send cycle in ms
   byte          Shield;       // 0 = none, 1 = 1DI2DO, 2 = 3DI
   byte          SendOnChange; // 0 = Send only in clycle, 1 = send on Demand (Pin Change)
+  byte          SendCounter;  // 0 = Send only Pin States, 1 = send counter and States
 } TheSetup;
 
 // ---------------------- [ Input & Debounce ] ----------------
@@ -232,30 +234,34 @@ void loop()
     lastSendMillis = currentMillis;
     Serial.write( ':' );
     PrintHex16(++loopCounter); 
-    Serial.write( '{' );
-    PrintHex16(Counter1.Counter); 
-    Serial.write( ',' );
-    PrintHex16(Counter2.Counter);
-    if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI)
+    if( TheSetup.SendCounter )
     {
+      Serial.write( '{' );
+      PrintHex16(Counter1.Counter); 
       Serial.write( ',' );
-      PrintHex16(Counter3.Counter);
-    }
-    if( TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI)
-    {
-      Serial.write( ',' );
-      PrintHex16(Counter4.Counter);
-      Serial.write( ',' );
-      PrintHex16(Counter5.Counter);
+      PrintHex16(Counter2.Counter);
+      if( TheSetup.Shield == SHIELD_1DI2DO || TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI)
+      {
+        Serial.write( ',' );
+        PrintHex16(Counter3.Counter);
+      }
+      if( TheSetup.Shield == SHIELD_3DI || TheSetup.Shield == SHIELD_5DI)
+      {
+        Serial.write( ',' );
+        PrintHex16(Counter4.Counter);
+        Serial.write( ',' );
+        PrintHex16(Counter5.Counter);
+      }    
+      if( TheSetup.Shield == SHIELD_5DI)
+      {
+        Serial.write( ',' );
+        PrintHex16(Counter6.Counter);
+        Serial.write( ',' );
+        PrintHex16(Counter7.Counter);
+      }
+      Serial.write( "}" );
     }    
-    if( TheSetup.Shield == SHIELD_5DI)
-    {
-      Serial.write( ',' );
-      PrintHex16(Counter6.Counter);
-      Serial.write( ',' );
-      PrintHex16(Counter7.Counter);
-    }    
-    Serial.write( "}{" );
+    Serial.write( "{" );
     Serial.print(Counter1.current_val, DEC ); 
     Serial.write( ',' );
     Serial.print(Counter2.current_val, DEC ); 
@@ -411,6 +417,7 @@ void SetupDefault()
   TheSetup.SendCycle = 2000;  // Cycle in ms
   TheSetup.Shield = 0;        // No Shield 
   TheSetup.SendOnChange = 0;  // No Send on Pin Change 
+  TheSetup.SendCounter = 1;   // Send Counter
 }
 
 #define EEPROM_ADDRESS  0
@@ -465,20 +472,7 @@ void DoCheckRxData()
 // ----------------------------------------------------------------------------------
 // C O M M A N D S
 // ----------------------------------------------------------------------------------
-// RESET          ( Restart controller)
-// INFO           ( print settings)
-// HARD           ( Hardware, 0=noShield, 1=1DI2DO, 2=3DI, 3=5DI)
-// POLL 10        ( Poll cycle in ms )
-// DEBO 3         ( Debounce n Scans stable to accept )
-// SKIP 3         ( Skip n Scans after pulse reconized )
-// EDGE 1|0       ( count on Edge HL or LH )
-// SEND 5000      ( send all xxx ms )
-// REL1 0|1       ( set releais 1 to on or off )
-// REL2 0|1       ( set releais 2 to on or off )
-// REL3 0|1       ( set releais 3 to on or off )
-// REL4 0|1       ( set releais 4 to on or off )
-// RPU1 1000      ( pulse relais 1 for nnn ms )
-// RPU2 1000      ( pulse relais 2 for nnn ms )
+// See first page
 void OnDataReceived()
 {
   bool result = false;
@@ -660,6 +654,17 @@ void OnDataReceived()
       result = true;
     }
     else
+    if( cmd.startsWith("CNTR"))
+    {
+      if( !checkRange( value, 0, 1 ) )
+        return;
+      Serial.print( "CNTR ");
+      Serial.println( value, DEC );
+      writeSetup = TheSetup.SendCounter != value;
+      TheSetup.SendCounter = value;
+      result = true;
+    }
+    else
     if( cmd.startsWith("SEND "))
     {
       if( !checkRange( value, 100, 50000 ) )
@@ -691,6 +696,7 @@ void DoCmdInfo()
     Serial.print( "EDGE "); Serial.println(TheSetup.CountOnLH, DEC );
     Serial.print( "SEND "); Serial.println( TheSetup.SendCycle, DEC);
     Serial.print( "CHNG "); Serial.println( TheSetup.SendOnChange, DEC);
+    Serial.print( "CNTR "); Serial.println( TheSetup.SendCounter, DEC);
     Serial.print( "REL1 "); Serial.println( digitalRead(OUT_1), DEC);
     Serial.print( "REL2 "); Serial.println( digitalRead(OUT_2), DEC);
     Serial.println( "HARD 0 (no extension)" );
