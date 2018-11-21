@@ -77,6 +77,15 @@ With this Extension the total count of Inputs is three and the total Relays are 
 
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO) for more details.**
 
+### 5 Digital Input
+With this Extension the total count of Inputs is seven. The Inputs are galvanically isolated to max 5kV.
+
+[![Andino X1 - Digital input, Relais extension Extension](https://andino.systems/wp-content/uploads/5di-extension-small.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/5DI)
+
+**See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/5DI) for more details.**
+
+
+
 ### Breadboard
 For prototyping of a additional extension a Breadboard is also available.
 
