@@ -14,4 +14,4 @@ Connection
 
 Serial Interface
 
-![Andino X1 - Digital inputs Extension - Serial interface](serial.png)
+![Andino X1 - Digital inputs Extension - Serial interface](serial.PNG)
