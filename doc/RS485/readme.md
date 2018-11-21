@@ -13,13 +13,13 @@ This Board based on the SPI Uart from NXP [SC16IS752][3]. The SPI Channel can be
 In Half Duplex Mode the transmitter can be switched on by the application with the RTS signal or automatically by the Hardware (Auto Transmitter on). 
 #### Connector
 
-![Andino X1 -Screw Terminal](https://andino.systems/wp-content/uploads/extension-connector-300x182.png)
+![Andino X1 -Screw Terminal](extension-connector-small.png)
 
-![RS485 Connector screw terminal](https://github.com/andino-systems/Andino-X1/blob/master/doc/RS485/RS485_RS422.png?raw=true)
+![RS485 Connector screw terminal](RS485_RS422.png)
 
 #### Jumper
 
-![RS485 Jumper](https://andino.systems/wp-content/uploads/RS485-jumper.png)
+![RS485 Jumper](RS485-jumper.png)
 
 #### Content
 This Repository contains the 

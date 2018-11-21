@@ -6,8 +6,12 @@ With this Extension the total count of Inputs are three. The Inputs are galvanic
 ### Connectors
 Screw Terminal
 
-![Andino X1 -Screw Terminal](https://andino.systems/wp-content/uploads/extension-connector-300x182.png)
+![Andino X1 -Screw Terminal](extension-connector-small.png)
 
 Connection
 
-![Andino X1 - Digital inputs Extension](https://github.com/andino-systems/Andino-X1/blob/master/doc/3DI/3DI.png?raw=true)
+![Andino X1 - Digital inputs Extension](3DI.png)
+
+Serial Interface
+
+![Andino X1 - Digital inputs Extension - Serial interface](serial.png)
