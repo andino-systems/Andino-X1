@@ -51,9 +51,11 @@
 // :0043{0004,0000,000C}{0,0,0}
 // :0044{0008,0000,000F}{0,0,1}
 // :0045{0008,0000,000F}{0,0,1}
-#define VERSION 181026
+#define VERSION 181216
 // History:
-// 181026: New Command CHNG, Version in Info
+// 181026: New Command CHNG, Version in Info, CNTR can switch off the Counter - Only Events will be send
+// 181126: Count-up only on configured EDGE
+// 181216: Fixed debouncing
 
 #include <EEPROM.h>
 #include "TimerOne.h"
@@ -356,24 +358,24 @@ void doCounter( CounterControl * pCounter, byte input )
   if( pCounter->skip_counter == 0 )
   {
     input = (input==1 )?0:1;
-    if( pCounter->current_val  == input && input == TheSetup.CountOnLH)
+    if( pCounter->current_val  != input )
     {
-      if( pCounter->poll_counter  != 0xff ) // schon gemeldet
-      {
         pCounter->poll_counter ++;
         if( pCounter->poll_counter == TheSetup.PollCount )
         {
-           pinChanged = true;
-           pCounter->Counter++;
-           pCounter->poll_counter  = 0xff;
-           pCounter->skip_counter = TheSetup.SkipCount;
+          if( input == TheSetup.CountOnLH )
+          {
+             pCounter->Counter++;
+          }
+          pCounter->current_val   = input;
+          pCounter->poll_counter  = 0;
+          pCounter->skip_counter = TheSetup.SkipCount;
+          pinChanged = true;
         }
-      }
     }
     else
     {
       pCounter->poll_counter = 0;
-      pCounter->current_val  = input;
     }
   }
   else
@@ -487,7 +489,8 @@ void OnDataReceived()
     DoCmdReset();
   }
   
-  if( cmd.startsWith("INFO"))
+  if(  cmd.startsWith("INFO")
+    || cmd.startsWith("HELP"))
   {
     DoCmdInfo();
     result = true;
