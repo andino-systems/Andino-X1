@@ -174,10 +174,15 @@ Set the Board to "Arduino Pro or Pro mini" and the CPU to ATMega168 (3.3Volt, 8M
 ![Arduino IDE Settings for Andino](jumper.png)
 ![Arduino IDE Settings for Andino](jumper2.png)
 
+## Setup the Arduino IDE for Andino X1
 
+### Settings for Version with ATMega168
 
 ![Jumper Configuration](arduino-settings.png)
 
+### Settings for Version > 201903xxx (ATMega328)
+
+![Jumper Configuration](arduino-settings-atmega328.png)
 
 
 Pin definition for In- and outputs:

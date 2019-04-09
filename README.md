@@ -9,6 +9,14 @@ Andino X1
 
 **[For more technical documentation please see here][3]**
 
+
+**New !**
+
+Andino X1 with Serial Numbers from **201903xxx** has the ATMega328 instead the ATMega168 build in.
+This means double Flash, EEProm and RAM !
+
+[Please see here for more Details](https://github.com/andino-systems/Andino-X1/tree/master/doc/BaseBoard)
+
 ## Overview
 
 The [Andino X1][1] is a microcontroller board for the Raspberry Pi in a DIN-rail housing for installation in a control cabinet. It is used to adapt digital inputs and outputs for a voltage of 24 V. The X1 has its own microcontroller for precise signal preprocessing and adaptation of signal generators and actuators. It also contains a Raspberry Pi (2/3). The inputs and outputs as well as the power supply of the Pi are optimally protected. Communication between the microcontroller and the Pi takes place via the UART interface.
