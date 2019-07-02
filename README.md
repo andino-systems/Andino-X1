@@ -1,14 +1,22 @@
 Andino X1
 ==========
 
-[Andino X1][1], a base board that allows the raspberry pi to be used in an industrial environment
+[Andino X1][1], a base board that allows the raspberry pi to be used in an industrial environment on a DIN Rail
 
 ![Andino X1 - Raspberry Pi on DIN Rail](Andino-X1-Raspberry-Pi-in-der-industrie.png)  
 
   
 
-**[For more technical documentation please see here][3]**
+**For more technical detailed documentation please see here:**
 
+- [Andino X1 Base-Board: RTC and Arduino Firmware](https://github.com/andino-systems/doc/)
+- [1 Input and 2 Relay Extension](https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO/)
+- [5 Inputs Extension](https://github.com/andino-systems/Andino-X1/tree/master/doc/5DI/)
+- [CAN Bus Extension](https://github.com/andino-systems/Andino-X1/tree/master/doc/CAN/)
+- [Dual RS232 Extension](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS232/)
+- [RS485 / RS422 Extension](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS485/)
+- [Source of the default Arduino Firmware](https://github.com/andino-systems/Andino-X1/tree/master/src/firmware/counting)
+- [Configure the Raspberry Pi to use the 4G Modem](https://github.com/andino-systems/Andino-IO/tree/master/qmi)
 
 **New !**
 
