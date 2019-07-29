@@ -1,21 +1,34 @@
-Dual Channel UART RS232 Extension
+Dual Channel UART RS232-WAN Extension
 ========
 
 This Plugin for the [Andino X1][1], provides a DualChannel UATRT to the Raspberry Pi or the Arduino Controller.
+The WAN version has an internal connection for using a Lora WAN or 2G, 4G modem 
 
-![Andino X1 - Dual Channel RS232 Extension](rs232-extension-small.png)
 
-Overview
-====
+![Andino X1 - Dual Channel RS232 Extension](rs232-wan-pcb.png)
 
+# Overview
 
 The Board based on the SPI Uart from NXP [SC16IS752][3]. The SPI Channel can be jumpered to the Raspberry Pi or the Arduino Controller. With the Arduino Controller time critical protocols can be implemented or a general pre processing of the data can be performed.
 
+If the Jumper is closed the 2nd UARTs RxD is wired to the external screw terminal.
 
-![Andino X1 - RS232 Connector Skrew Terminal](RS232.png)
+If the Jumper is open the 2nd UARTs RxD is wired to the internal connector.
+  
 
-#### Content
+## External connectors
+
+![Andino X1 - Dual Channel RS232 Extension](RS232.png)
+
+![Andino X1 - RS232 Connector Skrew Terminal](extension-connector-small.png)
+
+## Internal connector
+
+![Andino X1 - RS232 WAN internal RS232](internal-connector.png)
+
+## Content
 This Repository contains the 
+
 * Schematics
 * Overlay for the Raspberry Pi
 * Library for the Arduino
@@ -48,10 +61,11 @@ dtoverlay=sc16is752-spi0,int_pin=7
 * Reboot. After that two new Devices are available /dev/ttySC0 and /dev/ttySC1
 
 ### Test
-```
-sudo apt-get install minicom
-sudo minicom --setup
-```
+
+
+    sudo apt-get install minicom
+    sudo minicom --setup
+    
 select /dev/ttySC0 or /dev/ttySC1
 
 ### Application examples
