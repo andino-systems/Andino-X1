@@ -1,4 +1,4 @@
-Andino X1 Firmware Sample
+Standard Andino X1 Firmware
 ==========
 
 [Andino X1][1], a base board that allows the raspberry pi to be used in an industrial environment.
