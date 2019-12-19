@@ -2,6 +2,7 @@ Andino X1
 ==========
 
 [Andino X1][1], a base board that allows the raspberry pi to be used in an industrial environment on a DIN Rail
+**Please also look at our [Wiki](https://github.com/andino-systems/Andino-X1/wiki)**
 
 ![Andino X1 - Raspberry Pi on DIN Rail](Andino-X1-Raspberry-Pi-in-der-industrie.png)  
 
