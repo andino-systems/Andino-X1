@@ -13,7 +13,7 @@ $ wget -q -O - https://storage.z-wave.me/RaspbianInstall | sudo bash
 #### Verify installation
 To verify your installation go to [find.z-wave.me](https://find.z-wave.me) and type in the user id and password from the console log. 
 The password for the admin user can now be set. The dashboard can be then accessed via remote or locally. For a remote access on [find.z-wave.me](https://find.z-wave.me) use __&lt;user id>/admin__ (and of course the already set admin password). If access it locally (i.e. on _&lt;ip_of_raspi>:8083/smarthome_) just use __admin__ and the set password.
-<center><img src="console_log.png" style="margin:10px;clear:both;"><img src="img/remote_access.png" style="margin:10px;clear:both;width:200px;" width=200></center>
+<center><img src="console_log.png" style="margin:10px;clear:both;"><img src="remote_access.png" style="margin:10px;clear:both;width:200px;" width=200></center>
 
 #### Configure serial port
 Before you start to add your device, you need to change the serial port and to establish a connection to the shield:
