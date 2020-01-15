@@ -49,7 +49,7 @@ There are two bindings you can do: You can establish a binding the Z-Way server 
 Actually this is straight forward if you know about openhab. Go in to the paper UI of the openhab. 
 1. Install the the Z-Way Binding when you search in ``Add-ons`` -> ``Bindings`` for Z-Way and click on ``Install``.
 2. After it finished installing, you can add the server as a thing: Go To ``Inbox``, click on the ``+``-circle and add the Z-Way Server as a thing. 
-<div style="text-align:center;"><img src="add_z-way_as_thing.PNG" style="height:auto;"></div>
+<div style="text-align:center;"><img src="add_z-way_as_thing.jpg" style="height:auto;"></div>
 3. Now goto ``Configuration``->``Things`` and edit the Z-Way Server. 
 4. Here you can configure the connection to the Z-WAy server. Configure the parameters as you need to or let it at the default values. Finally type in the password you set for the Z-Way access.
 5. Great! The server should be now online. After a few moments, your devices should be in the inbox and you can add them as a thing.
