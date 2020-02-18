@@ -63,7 +63,8 @@ The integrated, battery-buffered RTC provides the correct time even if no NTP (t
 The SPI and I2C Busses of the Raspberry Pi and the Arduino Controller are connected with a Pin Header.
 Different plugins can be plugged into this header.
 
-![Andino X1 - Extension port](./doc/img/Extension-Pinout.png)
+
+![Andino X1 - Extension port](<img src="./doc/img/Extension-Pinout.png" width="300" height="293">)
 
 Different extensions are available.
 
