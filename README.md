@@ -71,35 +71,35 @@ Different extensions are available.
 ### Dualchannel RS232 Extension
 Extends the Raspberry or the Arduino by two serial interfaces 
 
-[![Andino X1 - Dualchannel RS232 Extension](./doc/img/rs232-extension-small.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS232)
+<a href="https://github.com/andino-systems/Andino-X1/tree/master/doc/RS232"><img src="./doc/img/rs232-extension-small.png" width="300" height="205"></a>
 
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS232) for more details.**
 
 ### RS485 / RS422 Extension
 Extends the Raspberry or the Arduino by a fully isolated RS485 / RS422 interface
 
-[![Andino X1 - Dualchannel RS485 Extension](./doc/img/rs485-extension-small.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS485)
+<a href="https://github.com/andino-systems/Andino-X1/tree/master/doc/RS485"><img src="./doc/img/rs485-extension-small.png" width="300" height="235"></a>
 
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/RS485) for more details.**
 
 ### 3 Digital Input
 With this Extension the total count of Inputs is five. The Inputs are galvanically isolated to max 5kV.
 
-[![Andino X1 - Digital input extension Extension](./doc/img/3in-extension-small.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/3DI)
+<a href="https://github.com/andino-systems/Andino-X1/tree/master/doc/3DI"><img src="./doc/img/3in-extension-small.png" width="300" height="211"></a>
 
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/3DI) for more details.**
 
 ### 1 Digital Input / 2 Relay Output
 With this Extension the total count of Inputs is three and the total Relays are four. The Inputs are galvanically isolated to max 5kV.
 
-[![Andino X1 - Digital input, Relais extension Extension](./doc/img/1in2out-extension-small.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO)
+<a href="https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO"><img src="./doc/img/1in2out-extension-small.png" width="300" height="209"></a>
 
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/1DI2DO) for more details.**
 
 ### 5 Digital Input
 With this Extension the total count of Inputs is seven. The Inputs are galvanically isolated to max 5kV.
 
-[![Andino X1 - Digital input, Relais extension Extension](./doc/img/5di.png)](https://github.com/andino-systems/Andino-X1/tree/master/doc/5DI)
+<a href="https://github.com/andino-systems/Andino-X1/tree/master/doc/5DI"><img src="./doc/img/pcb-5di.png" width="300" height="209"></a>
 
 **See [here](https://github.com/andino-systems/Andino-X1/tree/master/doc/5DI) for more details.**
 
@@ -108,7 +108,7 @@ With this Extension the total count of Inputs is seven. The Inputs are galvanica
 ### Breadboard
 For prototyping of a additional extension a Breadboard is also available.
 
-![Andino X1 - Breadboard Extension](./doc/img/breadboard-extension-small.png)
+<img src="./doc/img/1in2out-extension-small.png" width="300" height="232">
 
 ### Application examples
 * Data collection on production machines
