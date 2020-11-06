@@ -1,4 +1,4 @@
-This is the old repository of the Andino-X1. For up-to-date documentation, please refer to the [Andino-X1 section](https://github.com/andino-systems/Andino/tree/master/Andino-X1) in the new Andino repository.
+This is the old repository of the Andino-X1. For up-to-date documentation, please refer to the [https://andino.systems](https://andino.systems).
 ====
 
 
@@ -133,7 +133,7 @@ For prototyping of a additional extension a Breadboard is also available.
 
 **[How to use Andino X1 with Node red](https://github.com/andino-systems/Andino-X1/tree/master/src/node-red-contrib-andinox1)**   
 **[How to use Andino X1 with python](https://github.com/andino-systems/Andino-X1/tree/master/src/python)**   
-**[Example Firmware](https://github.com/andino-systems/Andino-X1/tree/master/src/firmware/counting)**   
+**[Default Firmware](https://github.com/andino-systems/Andino-X1/tree/master/src/firmware/Version004)**   
 
 
 Author
