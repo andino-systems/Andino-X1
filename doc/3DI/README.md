@@ -1,17 +1,12 @@
-## 3 Digital Inputs
-With this Extension the total count of Inputs are three. The Inputs are galvanically isolated to max 5kV.
+# We migrated to a new repository!
 
-![Andino X1 - Digital inputs Extension](https://andino.systems/wp-content/uploads/3in-extension-small-300x211.png)
+---
 
-### Connectors
-Screw Terminal
+**This is an old repository of our products. Our new resources can be found on our new GitHub, as well as the our documentation website:**
 
-![Andino X1 -Screw Terminal](extension-connector-small.png)
+* See the [Andino](https://github.com/andino-systems/Andino) repository for all downloads
+* See the [andino.systems](https://andino.systems/) website for up-to-date documentation
 
-Connection
+---
 
-![Andino X1 - Digital inputs Extension](3DI.png)
-
-Serial Interface
-
-![Andino X1 - Digital inputs Extension - Serial interface](serial.PNG)
+*Clear Systems GmbH - 2021*

@@ -1,19 +1,12 @@
-## CAN Bus
-With this Extension adds a CAN Bus interface to the Raspberry Pi on the Andino X1.
-
-![Andino X1 -Screw Terminal](can-shield.png)
-
-# Connection
-
-## Screw Terminal
-
-![Andino X1 -Screw Terminal](extension-connector-small.png)
-
-## Pins
-
-![Andino X1 - CAN Bus Extension](can.png)
+# We migrated to a new repository!
 
 ---
-# Schematics
 
-![Andino X1 -CAN Bus Extension - Schematics](schematics.png)
+**This is an old repository of our products. Our new resources can be found on our new GitHub, as well as the our documentation website:**
+
+* See the [Andino](https://github.com/andino-systems/Andino) repository for all downloads
+* See the [andino.systems](https://andino.systems/) website for up-to-date documentation
+
+---
+
+*Clear Systems GmbH - 2021*

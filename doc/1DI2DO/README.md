@@ -1,13 +1,12 @@
-## 1 Digital Input / 2 Relay Output
-With this Extension the total count of Inputs is three and the total Relays are four. The Inputs are galvanically isolated to max 5kV.
+# We migrated to a new repository!
 
-![Andino X1 - Digital input, Relais extension Extension](https://andino.systems/wp-content/uploads/1in2out-extension-small-300x209.png)
+---
 
-### Connectors
-Screw Terminal
+**This is an old repository of our products. Our new resources can be found on our new GitHub, as well as the our documentation website:**
 
-![Andino X1 -Screw Terminal](https://andino.systems/wp-content/uploads/extension-connector-300x182.png)
+* See the [Andino](https://github.com/andino-systems/Andino) repository for all downloads
+* See the [andino.systems](https://andino.systems/) website for up-to-date documentation
 
-Connection
+---
 
-![Andino X1 - Digital input, Relais extension Extension](https://github.com/andino-systems/Andino-X1/blob/master/doc/1DI2DO/1DI2DO.png?raw=true)
+*Clear Systems GmbH - 2021*
